@@ -11,6 +11,7 @@ import StoreKit
 
 class AppleMusicManager: ObservableObject {
 	private let developerToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjVRTEQ3VFY0SDQifQ.eyJpc3MiOiJHODJDTE5WQTY0IiwiZXhwIjoxNjY3Njg0MDY1LCJpYXQiOjE2NTE5MTYwNjV9.KuxfoPON751gB-_-xWuucC4ppPTPYQs6_yznr8GC6FTxJfsnvIbGeVvspd6n1yZXtbMCr_vGYwlyouymI8biHg"  // FIXME: Can we hide it somehow?
+    private let apiRootPath = "https://api.music.apple.com/v1"  // Apple Music API Root Path
 	
 	@Published var currentPlayingSong = Song(id: "", name: "", artistName: "", artworkURL: "")
 	@Published var musicPlayer = MPMusicPlayerController.systemMusicPlayer  // Use iOS/iPadOS Msuic.app
@@ -30,7 +31,7 @@ class AppleMusicManager: ObservableObject {
 	func fetchStorefrontID(userToken: String, completion: @escaping(String) -> Void) {
 		 var storefrontID: String!
 		
-		 let storefrontGetUrl = URL(string: "https://api.music.apple.com/v1/me/storefront")!
+		 let storefrontGetUrl = URL(string: apiRootPath + "/me/storefront")!
 		 var musicRequest = URLRequest(url: storefrontGetUrl)
 		 musicRequest.httpMethod = "GET"
 		 musicRequest.addValue("Bearer \(developerToken)", forHTTPHeaderField: "Authorization")
@@ -48,12 +49,12 @@ class AppleMusicManager: ObservableObject {
 		 }.resume()
 	}
 	
+    /// See Also: https://developer.apple.com/documentation/applemusicapi/search_for_catalog_resources
 	func searchAppleMusic(_ userToken: String, _ storefrontID: String, _ searchTerm: String!, completion: @escaping([Song]) -> Void) {
 		var songs = [Song]()
 		
-		// https://developer.apple.com/documentation/applemusicapi/search_for_catalog_resources
 		let searchResultGetUrl = URL(
-			string: "https://api.music.apple.com/v1/catalog/\(storefrontID)/search?term=\(searchTerm.replacingOccurrences(of: " ", with: "+"))&types=songs&limit=25"
+			string: apiRootPath + "/catalog/\(storefrontID)/search?term=\(searchTerm.replacingOccurrences(of: " ", with: "+"))&types=songs&limit=25"
 		)!  // FIXME: When type in "周杰倫", the result returns nil.
 		var musicRequest = URLRequest(url: searchResultGetUrl)
 		musicRequest.httpMethod = "GET"
@@ -83,7 +84,48 @@ class AppleMusicManager: ObservableObject {
 			}
 		}.resume()
 	}
-	
+    
+    /// https://developer.apple.com/documentation/applemusicapi/get_all_library_playlists
+    func getAllUserPlaylists(_ userToken: String, completion: @escaping([Playlist]) -> Void) {
+        var playlists = [Playlist]()
+        
+        
+        let getUrl = URL(string: apiRootPath + "/me/library/playlists")!
+        
+        var musicRequest = URLRequest(url: getUrl)
+        musicRequest.httpMethod = "GET"
+        musicRequest.addValue("Bearer \(developerToken)", forHTTPHeaderField: "Authorization")
+        musicRequest.addValue(userToken, forHTTPHeaderField: "Music-User-Token")
+        
+        
+        URLSession.shared.dataTask(with: musicRequest) { (data, response, error) in
+            guard error == nil else { return }
+            
+            if let json = try? JSON(data: data!) {
+                let result = (json["data"]).array!
+                
+                for playlist in result {
+                    let atrributes = playlist["attributes"]
+                    
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+                    
+                    playlists.append(
+                        Playlist(
+                            id: playlist["id"].stringValue,
+                            name: atrributes["name"].stringValue,
+                            isPublic: atrributes["isPublic"].boolValue,
+                            canEdit: atrributes["canEdit"].boolValue,
+                            dateAdded: formatter.date(from: atrributes["dateAdded"].stringValue) ?? Date()
+                        )
+                    )
+                }
+                
+                completion(playlists)
+            }
+        }.resume()
+    }
+    
 	// MARK: - Intent
 	func playSong(_ song: Song) {
 		currentPlayingSong = song

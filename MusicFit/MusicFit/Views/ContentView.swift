@@ -56,6 +56,11 @@ struct ContentView: View {
 				if status == .authorized {
 					musicManager.getUserToken { userToken in
 						print(userToken)
+                        
+                        musicManager.getAllUserPlaylists(userToken) { playlists in
+                            print(playlists)
+                        }
+                        
 						musicManager.fetchStorefrontID(userToken: userToken) { storefrontID in
 							print(storefrontID)
 							musicManager.searchAppleMusic(userToken, storefrontID, "Taylor Swift") { songs in
