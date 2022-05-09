@@ -49,7 +49,8 @@ class AppleMusicManager: ObservableObject {
 		 }.resume()
 	}
 	
-    /// See Also: https://developer.apple.com/documentation/applemusicapi/search_for_catalog_resources
+    // See Also: https://developer.apple.com/documentation/applemusicapi/search_for_catalog_resources
+    // TODO: Add formal documentation to this function
 	func searchAppleMusic(_ userToken: String, _ storefrontID: String, _ searchTerm: String!, completion: @escaping([Song]) -> Void) {
 		var songs = [Song]()
 		
@@ -85,7 +86,8 @@ class AppleMusicManager: ObservableObject {
 		}.resume()
 	}
     
-    /// https://developer.apple.com/documentation/applemusicapi/get_all_library_playlists
+    // See Also: https://developer.apple.com/documentation/applemusicapi/get_all_library_playlists
+    // TODO: Add formal documentation to this function
     func getAllUserPlaylists(_ userToken: String, completion: @escaping([Playlist]) -> Void) {
         var playlists = [Playlist]()
         
@@ -102,9 +104,9 @@ class AppleMusicManager: ObservableObject {
             guard error == nil else { return }
             
             if let json = try? JSON(data: data!) {
-                let result = (json["data"]).array!
+                let dataArray = (json["data"]).array!
                 
-                for playlist in result {
+                for playlist in dataArray {
                     let atrributes = playlist["attributes"]
                     
                     let formatter = DateFormatter()
@@ -114,9 +116,11 @@ class AppleMusicManager: ObservableObject {
                         Playlist(
                             id: playlist["id"].stringValue,
                             name: atrributes["name"].stringValue,
+                            description: "",
                             isPublic: atrributes["isPublic"].boolValue,
                             canEdit: atrributes["canEdit"].boolValue,
-                            dateAdded: formatter.date(from: atrributes["dateAdded"].stringValue) ?? Date()
+                            dateAdded: formatter.date(from: atrributes["dateAdded"].stringValue) ?? Date(),
+                            artworkURL: ""
                         )
                     )
                 }
@@ -125,6 +129,44 @@ class AppleMusicManager: ObservableObject {
             }
         }.resume()
     }
+    
+    // See Also: https://developer.apple.com/documentation/applemusicapi/get_a_library_playlist
+    // TODO: Add formal documentation to this function
+    func getPlaylistData(_ userToken: String, playlistId: String, completion: @escaping(Playlist) -> Void) {
+        //var playlist: Playlist
+        
+        let getUrl = URL(string: apiRootPath + "/me/library/playlists/" + playlistId)!
+        
+        var musicRequest = URLRequest(url: getUrl)
+        musicRequest.httpMethod = "GET"
+        musicRequest.addValue("Bearer \(developerToken)", forHTTPHeaderField: "Authorization")
+        musicRequest.addValue(userToken, forHTTPHeaderField: "Music-User-Token")
+        
+        URLSession.shared.dataTask(with: musicRequest) { (data, response, error) in
+            guard error == nil else { return }
+            
+            if let json = try? JSON(data: data!) {
+                let metadata = (json["data"]).array![0]
+                let attributes = (json["data"]).array![0]["attributes"]
+                
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+                
+                completion(
+                    Playlist(
+                        id: metadata["id"].stringValue,
+                        name: attributes["name"].stringValue,
+                        description: attributes["description"]["standard"].stringValue,
+                        isPublic: attributes["isPublic"].boolValue,
+                        canEdit: attributes["canEdit"].boolValue,
+                        dateAdded: dateFormatter.date(from: attributes["dateAdded"].stringValue) ?? Date(),
+                        artworkURL: attributes["artwork"]["url"].stringValue
+                    )
+                )
+            }
+        }.resume()
+    }
+    
     
 	// MARK: - Intent
 	func playSong(_ song: Song) {
