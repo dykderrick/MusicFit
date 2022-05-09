@@ -1,2 +1,5 @@
 # For macOS stuff
 *.DS_Store
+
+# For Xcode user settings
+./MusicFit/MusicFit.xcodeproj/xcuserdata
