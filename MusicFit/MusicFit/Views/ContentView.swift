@@ -61,12 +61,18 @@ struct ContentView: View {
                             print(playlists)
                         }
                         
+                        musicManager.getPlaylistTracks(userToken, playlistId: "p.EYWrg1JTmbEraBr") { playlistTrucks in
+                            print(playlistTrucks)
+                        }
+                        
+                        /*
 						musicManager.fetchStorefrontID(userToken: userToken) { storefrontID in
 							print(storefrontID)
 							musicManager.searchAppleMusic(userToken, storefrontID, "Taylor Swift") { songs in
 								print(songs)
 							}
 						}
+                         */
 					}
 				}
 			}
