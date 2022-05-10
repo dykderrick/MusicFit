@@ -2,4 +2,4 @@
 *.DS_Store
 
 # For Xcode user settings
-./MusicFit/MusicFit.xcodeproj/xcuserdata
+MusicFit/MusicFit.xcodeproj/xcuserdata/*
