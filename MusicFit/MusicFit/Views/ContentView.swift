@@ -28,7 +28,7 @@ struct ContentView: View {
 				.tag(1)
 				.tabItem {
 					VStack {
-						Image(systemName: "music.note")  // TODO: Change image
+						Image(systemName: "text.append")
 						Text("Playlist")
 					}
 				}
@@ -37,7 +37,7 @@ struct ContentView: View {
 				.tag(2)
 				.tabItem {
 					VStack {
-						Image(systemName: "music.note")  // TODO: Change image
+						Image(systemName: "magnifyingglass")
 						Text("Search")
 					}
 				}
@@ -46,11 +46,12 @@ struct ContentView: View {
 				.tag(3)
 				.tabItem {
 					VStack {
-						Image(systemName: "music.note")  // TODO: Change image
+						Image(systemName: "person.fill")  // TODO: Change image
 						Text("Me")
 					}
 				}
 		}
+		.accentColor(Color(hex: "#25E495"))
 		.onAppear() {
 			SKCloudServiceController.requestAuthorization { (status) in
 				if status == .authorized {
