@@ -7,6 +7,7 @@
 
 import MediaPlayer
 import SwiftyJSON
+import Alamofire
 import StoreKit
 
 class AppleMusicManager: ObservableObject {
@@ -33,24 +34,60 @@ class AppleMusicManager: ObservableObject {
 	// storefrontID is an ISO 3166 alpha-2 country code
 	// TODO: Add formal documentation to this function
 	func fetchStorefrontID(userToken: String, completion: @escaping(String) -> Void) {
-		 var storefrontID: String!
-		
         let musicRequest = wrapMusicRequest(
-            urlString: "\(apiRootPath)/me/storefront",
-            userToken: userToken,
-            developerToken: developerToken
-        )
+			urlSting: "\(apiRootPath)/me/storefront",
+			userToken: userToken,
+			developerToken: developerToken,
+			httpMethod: "GET",
+			parameters: nil
+		)
+
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			switch response.result {
+			case .success(let value):
+				completion(JSON(value)["data"].array![0]["id"].stringValue)
+
+			case .failure(let error):
+				print(error)
+			}
+		}.resume()
+	}
+	
+	func getSongRating(_ userToken: String, id songIdentifier: String, completion: @escaping(Song.Rating) -> Void) {
+		var rating = Song.Rating.unset
+		
+		let musicRequest = wrapMusicRequest(
+			urlSting: "\(apiRootPath)/me/ratings/songs/\(songIdentifier)",
+			userToken: userToken,
+			developerToken: developerToken,
+			httpMethod: "GET",
+			parameters: nil
+		)
+		
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			// TODO: handle Apple Music API capacity
+			/*
+			 Apple Music API limits the number of requests your app can make using a developer token within a specific period of time.
+			 If this limit is exceeded, you’ll temporarily receive 429 Too Many Requests error responses for requests that use the token.
+			 This error resolves itself shortly after the request rate has reduced.
+			 
+			 See Also: https://developer.apple.com/documentation/applemusicapi/generating_developer_tokens
+			 */
 			
-		 URLSession.shared.dataTask(with: musicRequest) { (data, response, error) in
-			  guard error == nil else { return }
+			switch response.result {
+			case .success(let value):
+				let result = (JSON(value)["data"]).array![0]["attributes"]["value"].intValue
+	
+				rating = (result == 1) ? Song.Rating.likes : Song.Rating.dislikes
+
+				completion(rating)
 				
-			  if let json = try? JSON(data: data!) {
-				  let result = (json["data"]).array!
-				  let id = (result[0].dictionaryValue)["id"]!
-				  storefrontID = id.stringValue
-				  completion(storefrontID)
-			  }
-		 }.resume()
+			case .failure(_):
+				// The most ugly design in Apple Music API: when the user hasn't set a song's rating, the API responses a 404.
+				// See Also: https://stackoverflow.com/questions/53767247/getting-a-rating-for-a-song-with-apple-music-api
+				completion(Song.Rating.unset)
+			}
+		}.resume()
 	}
 	
     // See Also: https://developer.apple.com/documentation/applemusicapi/search_for_catalog_resources
@@ -58,42 +95,45 @@ class AppleMusicManager: ObservableObject {
 	func searchAppleMusic(_ userToken: String, _ storefrontID: String, _ searchTerm: String!, completion: @escaping([Song]) -> Void) {
 		var songs = [Song]()
 		
-        
         // FIXME: When type in "周杰倫", the result returns nil.
-        let musicRequest = wrapMusicRequest(
-            urlString: "\(apiRootPath)/catalog/\(storefrontID)/search?term=\(searchTerm.replacingOccurrences(of: " ", with: "+"))&types=songs&limit=25",
-            userToken: userToken,
-            developerToken: developerToken
-        )
+		let musicRequest = wrapMusicRequest(
+			urlSting: "\(apiRootPath)/catalog/\(storefrontID)/search?term=\(searchTerm.replacingOccurrences(of: " ", with: "+"))&types=songs&limit=5",
+			userToken: userToken,
+			developerToken: developerToken,
+			httpMethod: "GET",
+			parameters: nil
+		)
 		
-		URLSession.shared.dataTask(with: musicRequest) { (data, response, error) in
-			guard error == nil else { return }
-			
-			if let json = try? JSON(data: data!) {
-				let result = (json["results"]["songs"]["data"]).array!
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			switch response.result {
+			case .success(let value):
+				let result = (JSON(value)["results"]["songs"]["data"]).array!
 				
 				for song in result {
-					let attributes = song["attributes"]
-                    
-                    // FIXME: This snippet is way too ugly.
-                    let genreNamesArray = (attributes["genreNames"]).array!
-                    var genreNames = [String]()
-                    for genreName in genreNamesArray {
-                        genreNames.append(genreName.stringValue)
-                    }
-                    
+					let attributes = song["attributes"]          // this song's attributes
+					let songIdentifier = song["id"].stringValue  // this song's unique id
+					
+					// FIXME: This snippet is way too ugly.
+					let genreNamesArray = (attributes["genreNames"]).array!
+					var genreNames = [String]()
+					for genreName in genreNamesArray {
+						genreNames.append(genreName.stringValue)
+					}
+					
 					songs.append(
 						Song(
-							id: attributes["playParams"]["id"].string!,
+							id: songIdentifier,
 							name: attributes["name"].string!,
 							artistName: attributes["artistName"].string!,
 							artworkURL: attributes["artwork"]["url"].string!,
-                            genreNames: genreNames
+							genreNames: genreNames
 						)
 					)
 				}
 				
 				completion(songs)
+			case .failure(let error):
+				print(error)
 			}
 		}.resume()
 	}
@@ -102,139 +142,219 @@ class AppleMusicManager: ObservableObject {
     // TODO: Add formal documentation to this function
     func getAllUserPlaylists(_ userToken: String, completion: @escaping([Playlist]) -> Void) {
         var playlists = [Playlist]()
+		
+		let musicRequest = wrapMusicRequest(
+			urlSting: "\(apiRootPath)/me/library/playlists",
+			userToken: userToken,
+			developerToken: developerToken,
+			httpMethod: "GET",
+			parameters: nil
+		)
         
-        
-        let musicRequest = wrapMusicRequest(
-            urlString: "\(apiRootPath)/me/library/playlists",
-            userToken: userToken,
-            developerToken: developerToken
-        )
-        
-        
-        URLSession.shared.dataTask(with: musicRequest) { (data, response, error) in
-            guard error == nil else { return }
-            
-            if let json = try? JSON(data: data!) {
-                let dataArray = (json["data"]).array!
-                
-                for playlist in dataArray {
-                    let atrributes = playlist["attributes"]
-                    
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                    
-                    playlists.append(
-                        Playlist(
-                            id: playlist["id"].stringValue,
-                            name: atrributes["name"].stringValue,
-                            description: "",
-                            isPublic: atrributes["isPublic"].boolValue,
-                            canEdit: atrributes["canEdit"].boolValue,
-                            dateAdded: formatter.date(from: atrributes["dateAdded"].stringValue) ?? Date(),
-                            artworkURL: ""
-                        )
-                    )
-                }
-                
-                completion(playlists)
-            }
-        }.resume()
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			switch response.result {
+			case .success(let value):
+				let dataArray = (JSON(value)["data"]).array!
+				
+				for playlist in dataArray {
+					let atrributes = playlist["attributes"]
+					
+					playlists.append(
+						Playlist(
+							id: playlist["id"].stringValue,
+							name: atrributes["name"].stringValue,
+							description: "",
+							isPublic: atrributes["isPublic"].boolValue,
+							canEdit: atrributes["canEdit"].boolValue,
+							dateAdded: ISO8601DateFormatter().date(from: atrributes["dateAdded"].stringValue) ?? Date(),
+							artworkURL: ""
+						)
+					)
+				}
+				
+				completion(playlists)
+			case .failure(let error):
+				print(error)
+			}
+		}.resume()
     }
     
     // See Also: https://developer.apple.com/documentation/applemusicapi/get_a_library_playlist
     // TODO: Add formal documentation to this function
-    func getPlaylistData(_ userToken: String, playlistId: String, completion: @escaping(Playlist) -> Void) {
-        let musicRequest = wrapMusicRequest(
-            urlString: "\(apiRootPath)/me/library/playlists/\(playlistId)",
-            userToken: userToken,
-            developerToken: developerToken
-        )
-        
-        URLSession.shared.dataTask(with: musicRequest) { (data, response, error) in
-            guard error == nil else { return }
-            
-            if let json = try? JSON(data: data!) {
-                let metadata = (json["data"]).array![0]
-                let attributes = (json["data"]).array![0]["attributes"]
-                
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                
-                completion(
-                    Playlist(
-                        id: metadata["id"].stringValue,
-                        name: attributes["name"].stringValue,
-                        description: attributes["description"]["standard"].stringValue,
-                        isPublic: attributes["isPublic"].boolValue,
-                        canEdit: attributes["canEdit"].boolValue,
-                        dateAdded: dateFormatter.date(from: attributes["dateAdded"].stringValue) ?? Date(),
-                        artworkURL: attributes["artwork"]["url"].stringValue
-                    )
-                )
-            }
-        }.resume()
+    func getLibraryPlaylistData(_ userToken: String, playlistId: String, completion: @escaping(Playlist) -> Void) {
+		let musicRequest = wrapMusicRequest(
+			urlSting: "\(apiRootPath)/me/library/playlists/\(playlistId)",
+			userToken: userToken,
+			developerToken: developerToken,
+			httpMethod: "GET",
+			parameters: nil
+		)
+		
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			switch response.result {
+			case .success(let value):
+				let metadata = (JSON(value)["data"]).array![0]
+				let attributes = (JSON(value)["data"]).array![0]["attributes"]
+				
+				completion(
+					Playlist(
+						id: metadata["id"].stringValue,
+						name: attributes["name"].stringValue,
+						description: attributes["description"]["standard"].stringValue,
+						isPublic: attributes["isPublic"].boolValue,
+						canEdit: attributes["canEdit"].boolValue,
+						dateAdded: ISO8601DateFormatter().date(from: attributes["dateAdded"].stringValue) ?? Date(),
+						artworkURL: attributes["artwork"]["url"].stringValue
+					)
+				)
+			case .failure(let error):
+				print(error)
+			}
+		}.resume()
     }
     
     // See Also: https://developer.apple.com/documentation/applemusicapi/get_a_library_playlist_s_relationship_directly_by_name
     // TODO: Add formal documentation to this function
     func getPlaylistTracks(_ userToken: String, playlistId: String, completion: @escaping(PlaylistTracks) -> Void) {
-        let musicRequest = wrapMusicRequest(
-            urlString: "\(apiRootPath)/me/library/playlists/\(playlistId)/tracks",
-            userToken: userToken,
-            developerToken: developerToken
-        )
-        
-        URLSession.shared.dataTask(with: musicRequest) { (data, response, error) in
-            guard error == nil else { return }
-            
-            if let json = try? JSON(data: data!) {
-                let metaSongs = (json["data"]).array!
-                
-                var songs = [Song]()
-                
-                for metaSong in metaSongs {
-                    let attributes = metaSong["attributes"]
-                    
-                    // FIXME: This snippet is way too ugly.
-                    let genreNamesArray = (attributes["genreNames"]).array!
-                    var genreNames = [String]()
-                    for genreName in genreNamesArray {
-                        genreNames.append(genreName.stringValue)
-                    }
-                    
-                    songs.append(
-                        Song(
-                            id: attributes["playParams"]["catalogId"].stringValue,
-                            name: attributes["name"].stringValue,
-                            artistName: attributes["artistName"].stringValue,
-                            artworkURL: attributes["artwork"]["url"].stringValue,
-                            genreNames: genreNames
-                        )
-                    )
-                }
-                
-                completion(
-                    PlaylistTracks(
-                        playlistId: playlistId,
-                        trucks: songs
-                    )
-                )
-            }
-            
-        }.resume()
+		let musicRequest = wrapMusicRequest(
+			urlSting: "\(apiRootPath)/me/library/playlists/\(playlistId)/tracks",
+			userToken: userToken,
+			developerToken: developerToken,
+			httpMethod: "GET",
+			parameters: nil
+		)
+		
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			switch response.result {
+			case .success(let value):
+				let metaSongs = (JSON(value)["data"]).array!
+				
+				var songs = [Song]()
+				
+				for metaSong in metaSongs {
+					let attributes = metaSong["attributes"]
+					let songIdentifier = attributes["playParams"]["catalogId"].stringValue
+//					var songRating = Song.Rating.unset
+					
+					// FIXME: This snippet is way too ugly.
+					let genreNamesArray = (attributes["genreNames"]).array!
+					var genreNames = [String]()
+					for genreName in genreNamesArray {
+						genreNames.append(genreName.stringValue)
+					}
+					
+					/*
+					// Request to the user's rating on this song
+					self.getSongRating(userToken, id: songIdentifier) { rating in
+						songRating = rating
+					}
+					 */
+					
+					
+					songs.append(
+						Song(
+							id: songIdentifier,
+							name: attributes["name"].stringValue,
+							artistName: attributes["artistName"].stringValue,
+							artworkURL: attributes["artwork"]["url"].stringValue,
+							genreNames: genreNames
+						)
+					)
+				}
+				
+				completion(
+					PlaylistTracks(
+						playlistId: playlistId,
+						trucks: songs
+					)
+				)
+			case .failure(let error):
+				print(error)
+			}
+		}.resume()
     }
-    
-    private func wrapMusicRequest(urlString: String, userToken: String, developerToken: String) -> URLRequest {
-        let url = URL(string: urlString)!
-        
-        var musicRequest = URLRequest(url: url)
-        musicRequest.httpMethod = "GET"
-        musicRequest.addValue("Bearer \(developerToken)", forHTTPHeaderField: "Authorization")
-        musicRequest.addValue(userToken, forHTTPHeaderField: "Music-User-Token")
-        
-        return musicRequest
-    }
-    
+	
+	func createPlaylistWithCatelogSongs(_ userToken: String, playlistName: String, playlistDescription: String, songCatelogIds: [String], completion: @escaping(Playlist) -> Void) {
+		
+		var tracksData = [[String: String]]()
+		for songCatelogId in songCatelogIds {
+			tracksData.append([
+				"id": songCatelogId,
+				"type": "songs"
+			])
+		}
+		
+		let musicRequest = wrapMusicRequest(
+			urlSting: "\(apiRootPath)/me/library/playlists",
+			userToken: userToken,
+			developerToken: developerToken,
+			httpMethod: "POST",
+			parameters: [
+				"attributes": [
+					"name": playlistName,
+					"description": playlistDescription
+				],
+				"relationships": [
+					"tracks": ["data": tracksData],
+					"parent": [
+						"data": [
+							[
+								"id": "p.playlistsroot",
+								"type": "library-playlist-folders"
+							]
+						]
+					]
+				]
+			]
+		)
+		
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			debugPrint(response)
+			
+			switch response.result {
+			case .success(let value):
+				let json = JSON(value)
+				print("JSON: \(json)")
+				
+				let result = json["data"].array![0]
+				let attributes = result["attributes"]
+				
+				completion(
+					Playlist(
+						id: result["id"].stringValue,
+						name: attributes["name"].stringValue,
+						description: attributes["description"]["standard"].stringValue,
+						isPublic: attributes["isPublic"].boolValue,
+						canEdit: attributes["canEdit"].boolValue,
+						dateAdded: ISO8601DateFormatter().date(from: attributes["dateAdded"].stringValue) ?? Date(),
+						artworkURL: ""  // TODO: Can we add custom artwork in playlist creation?
+					)
+				)
+
+			case .failure(let error):
+				print(error)
+			}
+		}.resume()
+	}
+	
+	private func wrapMusicRequest(urlSting: String, userToken: String, developerToken: String, httpMethod: String, parameters: [String: Any]?) -> Alamofire.DataRequest {
+		
+		let headers: HTTPHeaders = [
+			"Authorization": "Bearer \(developerToken)",
+			"Music-User-Token": userToken
+		]
+		
+		switch httpMethod {
+		case "GET":
+			return AF.request(urlSting, method: .get, headers: headers)
+		case "POST":
+			guard let requestParameters = parameters else { return AF.request(urlSting) }
+			return AF.request(urlSting, method: .post, parameters: requestParameters, encoding: JSONEncoding.default, headers: headers)
+		default:
+			return AF.request(urlSting)  // TODO: may have side effect
+		}
+	}
+	
 	// MARK: - Intent
 	func playSong(_ song: Song) {
 		currentPlayingSong = song

@@ -46,7 +46,7 @@ struct ContentView: View {
 				.tag(3)
 				.tabItem {
 					VStack {
-						Image(systemName: "person.fill")  // TODO: Change image
+						Image(systemName: "person.fill")
 						Text("Me")
 					}
 				}
@@ -57,23 +57,31 @@ struct ContentView: View {
 				if status == .authorized {
 					musicManager.getUserToken { userToken in
 						print(userToken)
+						
+						/*
+						musicManager.createPlaylistWithCatelogSongs(userToken, playlistName: "test playlist", playlistDescription: "test description", songCatelogIds: ["1450695739", "1440811598"]) { playlist in
+							print(playlist)
+						}
+						 */
+						
+						musicManager.getSongRating(userToken, id: "1544494722") { rating in
+							print(rating)
+						}
+						
+						
                         
                         musicManager.getAllUserPlaylists(userToken) { playlists in
                             print(playlists)
                         }
-                        
-                        musicManager.getPlaylistTracks(userToken, playlistId: "p.EYWrg1JTmbEraBr") { playlistTrucks in
-                            print(playlistTrucks)
-                        }
-                        
-                        /*
+
+						/*
 						musicManager.fetchStorefrontID(userToken: userToken) { storefrontID in
 							print(storefrontID)
 							musicManager.searchAppleMusic(userToken, storefrontID, "Taylor Swift") { songs in
 								print(songs)
 							}
 						}
-                         */
+						 */
 					}
 				}
 			}
