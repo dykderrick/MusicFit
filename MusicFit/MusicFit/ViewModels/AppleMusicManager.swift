@@ -11,7 +11,7 @@ import Alamofire
 import StoreKit
 
 class AppleMusicManager: ObservableObject {
-	private let developerToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjVRTEQ3VFY0SDQifQ.eyJpc3MiOiJHODJDTE5WQTY0IiwiZXhwIjoxNjY3Njg0MDY1LCJpYXQiOjE2NTE5MTYwNjV9.KuxfoPON751gB-_-xWuucC4ppPTPYQs6_yznr8GC6FTxJfsnvIbGeVvspd6n1yZXtbMCr_vGYwlyouymI8biHg"  // FIXME: Can we hide it somehow?
+	private static let developerToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjVRTEQ3VFY0SDQifQ.eyJpc3MiOiJHODJDTE5WQTY0IiwiZXhwIjoxNjY3Njg0MDY1LCJpYXQiOjE2NTE5MTYwNjV9.KuxfoPON751gB-_-xWuucC4ppPTPYQs6_yznr8GC6FTxJfsnvIbGeVvspd6n1yZXtbMCr_vGYwlyouymI8biHg"  // FIXME: Can we hide it somehow?
     private let apiRootPath = "https://api.music.apple.com/v1"  // Apple Music API Root Path
 	
     @Published var currentPlayingSong = Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""])
@@ -25,7 +25,7 @@ class AppleMusicManager: ObservableObject {
 	// See Also: https://stackoverflow.com/questions/65057320/skcloudservicecontroller-requestusertoken-freezes-on-ios-14-2
 	// TODO: Add formal documentation to this function
 	func getUserToken(completion: @escaping(_ userToken: String) -> Void) -> Void {
-		SKCloudServiceController().requestUserToken(forDeveloperToken: developerToken) { (userToken, error) in
+		SKCloudServiceController().requestUserToken(forDeveloperToken: AppleMusicManager.developerToken) { (userToken, error) in
 			guard error == nil else { return }
 			completion(userToken!)
 		}
@@ -37,7 +37,6 @@ class AppleMusicManager: ObservableObject {
         let musicRequest = wrapMusicRequest(
 			urlSting: "\(apiRootPath)/me/storefront",
 			userToken: userToken,
-			developerToken: developerToken,
 			httpMethod: "GET",
 			parameters: nil
 		)
@@ -59,7 +58,6 @@ class AppleMusicManager: ObservableObject {
 		let musicRequest = wrapMusicRequest(
 			urlSting: "\(apiRootPath)/me/ratings/songs/\(songIdentifier)",
 			userToken: userToken,
-			developerToken: developerToken,
 			httpMethod: "GET",
 			parameters: nil
 		)
@@ -99,7 +97,6 @@ class AppleMusicManager: ObservableObject {
 		let musicRequest = wrapMusicRequest(
 			urlSting: "\(apiRootPath)/catalog/\(storefrontID)/search?term=\(searchTerm.replacingOccurrences(of: " ", with: "+"))&types=songs&limit=5",
 			userToken: userToken,
-			developerToken: developerToken,
 			httpMethod: "GET",
 			parameters: nil
 		)
@@ -146,7 +143,6 @@ class AppleMusicManager: ObservableObject {
 		let musicRequest = wrapMusicRequest(
 			urlSting: "\(apiRootPath)/me/library/playlists",
 			userToken: userToken,
-			developerToken: developerToken,
 			httpMethod: "GET",
 			parameters: nil
 		)
@@ -185,7 +181,6 @@ class AppleMusicManager: ObservableObject {
 		let musicRequest = wrapMusicRequest(
 			urlSting: "\(apiRootPath)/me/library/playlists/\(playlistId)",
 			userToken: userToken,
-			developerToken: developerToken,
 			httpMethod: "GET",
 			parameters: nil
 		)
@@ -219,7 +214,6 @@ class AppleMusicManager: ObservableObject {
 		let musicRequest = wrapMusicRequest(
 			urlSting: "\(apiRootPath)/me/library/playlists/\(playlistId)/tracks",
 			userToken: userToken,
-			developerToken: developerToken,
 			httpMethod: "GET",
 			parameters: nil
 		)
@@ -287,7 +281,6 @@ class AppleMusicManager: ObservableObject {
 		let musicRequest = wrapMusicRequest(
 			urlSting: "\(apiRootPath)/me/library/playlists",
 			userToken: userToken,
-			developerToken: developerToken,
 			httpMethod: "POST",
 			parameters: [
 				"attributes": [
@@ -337,10 +330,10 @@ class AppleMusicManager: ObservableObject {
 		}.resume()
 	}
 	
-	private func wrapMusicRequest(urlSting: String, userToken: String, developerToken: String, httpMethod: String, parameters: [String: Any]?) -> Alamofire.DataRequest {
+	private func wrapMusicRequest(urlSting: String, userToken: String, httpMethod: String, parameters: [String: Any]?) -> Alamofire.DataRequest {
 		
 		let headers: HTTPHeaders = [
-			"Authorization": "Bearer \(developerToken)",
+			"Authorization": "Bearer \(AppleMusicManager.developerToken)",
 			"Music-User-Token": userToken
 		]
 		
