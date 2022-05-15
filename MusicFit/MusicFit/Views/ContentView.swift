@@ -64,13 +64,22 @@ struct ContentView: View {
 						}
 						 */
 						
+						/*
 						musicManager.getSongRating(userToken, id: "1544494722") { rating in
 							print(rating)
 						}
+						 */
 						
+						/*
+						musicManager.createLibraryPlaylistFolder(userToken, folderName: "test folder") { boolResult in
+							print(boolResult)
+						}
+						 */
+						
+						print("RESTING TEST: \(musicManager.getMusicFitPlaylistId(musicFitStatus: .Resting))")
 						
                         
-                        musicManager.getAllUserPlaylists(userToken) { playlists in
+                        musicManager.getAllLibraryPlaylists(userToken) { playlists in
                             print(playlists)
                         }
 

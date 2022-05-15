@@ -9,22 +9,22 @@ import SwiftUI
 
 struct PlaylistItem: View {
     var body: some View {
-		HStack {
+		HStack (spacing: 40) {
 			Image(systemName: "play.fill")
 				.resizable()
 				.frame(width: 93.0, height: 93.0)
 //				.cornerRadius(20)
 //				.shadow(radius: 10)
 			
-			Spacer()
-				.frame(width: 30.0, height: nil)
+//			Spacer()
+//				.frame(width: UIScreen.main.bounds.width - 2000, height: nil)
 			
 			VStack {
 				Text("FITNESS")
 					.font(.largeTitle)
 					.foregroundColor(Color(hex: "45FFCC"))
 					.bold()
-					.frame(width: 150.0)
+					.frame(width: UIScreen.main.bounds.width - 230)
 					
 					
 				HStack {
@@ -53,8 +53,8 @@ struct PlaylistItem: View {
 			Spacer()
 				.frame(width: 30.0)
 		}
-		.padding(.horizontal, 45.0)
-		.frame(height: 112.0)
+//		.padding(.horizontal, 45.0)
+		.frame(height: UIScreen.main.bounds.height / 7)
 		.background(.white.opacity(0.1))
     }
 }

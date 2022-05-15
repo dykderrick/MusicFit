@@ -12,14 +12,19 @@ struct PlaylistView: View {
 	
     var body: some View {
 		NavigationView {
-			List {
-				ForEach(playlistCount, id:\.self) { num in
-					PlaylistItem()
-					Spacer()
+			VStack {
+				List {
+					ForEach(playlistCount, id:\.self) { num in
+						PlaylistItem()
+							.listRowBackground(Color.black)
+					}
+					.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0))
 				}
-				.listRowInsets(EdgeInsets())
+				.navigationTitle("Playlist")
+				
+				MiniPlayer()
+				Spacer()
 			}
-			.navigationTitle("Playlist")
 		}
     }
 }
