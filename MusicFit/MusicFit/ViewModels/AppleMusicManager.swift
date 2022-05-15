@@ -160,7 +160,7 @@ extension AppleMusicManager {
 extension AppleMusicManager {
 	// See Also: https://developer.apple.com/documentation/applemusicapi/get_all_library_playlists
 	// TODO: Add formal documentation to this function
-	func getAllUserPlaylists(_ userToken: String, completion: @escaping([Playlist]) -> Void) {
+	func getAllLibraryPlaylists(_ userToken: String, completion: @escaping([Playlist]) -> Void) {
 		var playlists = [Playlist]()
 		
 		let musicRequest = wrapMusicRequest(
@@ -198,73 +198,11 @@ extension AppleMusicManager {
 		}.resume()
 	}
 	
-	func createPlaylistWithCatelogSongs(_ userToken: String, playlistName: String, playlistDescription: String, songCatelogIds: [String], completion: @escaping(Playlist) -> Void) {
-		
-		var tracksData = [[String: String]]()
-		for songCatelogId in songCatelogIds {
-			tracksData.append([
-				"id": songCatelogId,
-				"type": "songs"
-			])
-		}
-		
-		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/library/playlists",
-			userToken: userToken,
-			httpMethod: "POST",
-			parameters: [
-				"attributes": [
-					"name": playlistName,
-					"description": playlistDescription
-				],
-				"relationships": [
-					"tracks": ["data": tracksData],
-					"parent": [
-						"data": [
-							[
-								"id": "p.playlistsroot",
-								"type": "library-playlist-folders"
-							]
-						]
-					]
-				]
-			]
-		)
-		
-		musicRequest.validate().responseDecodable(of: JSON.self) { response in
-			debugPrint(response)
-			
-			switch response.result {
-			case .success(let value):
-				let json = JSON(value)
-				print("JSON: \(json)")
-				
-				let result = json["data"].array![0]
-				let attributes = result["attributes"]
-				
-				completion(
-					Playlist(
-						id: result["id"].stringValue,
-						name: attributes["name"].stringValue,
-						description: attributes["description"]["standard"].stringValue,
-						isPublic: attributes["isPublic"].boolValue,
-						canEdit: attributes["canEdit"].boolValue,
-						dateAdded: ISO8601DateFormatter().date(from: attributes["dateAdded"].stringValue) ?? Date(),
-						artworkURL: ""  // TODO: Can we add custom artwork in playlist creation?
-					)
-				)
-
-			case .failure(let error):
-				print(error)
-			}
-		}.resume()
-	}
-	
 	// See Also: https://developer.apple.com/documentation/applemusicapi/get_a_library_playlist
 	// TODO: Add formal documentation to this function
-	func getLibraryPlaylistData(_ userToken: String, playlistId: String, completion: @escaping(Playlist) -> Void) {
+	func getLibraryPlaylistData(_ userToken: String, catelogPlaylistId: String, completion: @escaping(Playlist) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/library/playlists/\(playlistId)",
+			urlSting: "\(apiRootPath)/me/library/playlists/\(catelogPlaylistId)",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -295,9 +233,9 @@ extension AppleMusicManager {
 	
 	// See Also: https://developer.apple.com/documentation/applemusicapi/get_a_library_playlist_s_relationship_directly_by_name
 	// TODO: Add formal documentation to this function
-	func getPlaylistTracks(_ userToken: String, playlistId: String, completion: @escaping(PlaylistTracks) -> Void) {
+	func getLibraryPlaylistTracks(_ userToken: String, libraryPlaylistId: String, completion: @escaping(PlaylistTracks) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/library/playlists/\(playlistId)/tracks",
+			urlSting: "\(apiRootPath)/me/library/playlists/\(libraryPlaylistId)/tracks",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -343,7 +281,7 @@ extension AppleMusicManager {
 				
 				completion(
 					PlaylistTracks(
-						playlistId: playlistId,
+						playlistId: libraryPlaylistId,
 						trucks: songs
 					)
 				)
