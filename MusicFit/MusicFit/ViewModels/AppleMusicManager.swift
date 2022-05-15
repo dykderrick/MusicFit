@@ -290,6 +290,105 @@ extension AppleMusicManager {
 			}
 		}.resume()
 	}
+	
+	// See Also: https://developer.apple.com/documentation/applemusicapi/create_a_new_library_playlist
+	// TODO: Add formal documentation to this function
+	func createPlaylistWithCatelogSongs(_ userToken: String, playlistName: String, playlistDescription: String, songCatelogIds: [String], completion: @escaping(Playlist) -> Void) {
+		
+		var tracksData = [[String: String]]()
+		for songCatelogId in songCatelogIds {
+			tracksData.append([
+				"id": songCatelogId,
+				"type": "songs"
+			])
+		}
+		
+		let musicRequest = wrapMusicRequest(
+			urlSting: "\(apiRootPath)/me/library/playlists",
+			userToken: userToken,
+			httpMethod: "POST",
+			parameters: [
+				"attributes": [
+					"name": playlistName,
+					"description": playlistDescription
+				],
+				"relationships": [
+					"tracks": ["data": tracksData],
+					"parent": [
+						"data": [
+							[
+								"id": "p.playlistsroot",
+								"type": "library-playlist-folders"
+							]
+						]
+					]
+				]
+			]
+		)
+		
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			debugPrint(response)
+			
+			switch response.result {
+			case .success(let value):
+				let json = JSON(value)
+				print("JSON: \(json)")
+				
+				let result = json["data"].array![0]
+				let attributes = result["attributes"]
+				
+				completion(
+					Playlist(
+						id: result["id"].stringValue,
+						name: attributes["name"].stringValue,
+						description: attributes["description"]["standard"].stringValue,
+						isPublic: attributes["isPublic"].boolValue,
+						canEdit: attributes["canEdit"].boolValue,
+						dateAdded: ISO8601DateFormatter().date(from: attributes["dateAdded"].stringValue) ?? Date(),
+						artworkURL: ""  // TODO: Can we add custom artwork in playlist creation?
+					)
+				)
+
+			case .failure(let error):
+				print(error)
+			}
+		}.resume()
+	}
+	
+	// See Also: https://developer.apple.com/documentation/applemusicapi/create_a_new_library_playlist_folder
+	// TODO: Add formal documentation to this function
+	func createLibraryPlaylistFolder(_ userToken: String, folderName: String, completion: @escaping(Bool) -> Void) {
+		let musicRequest = wrapMusicRequest(
+			urlSting: "\(apiRootPath)/me/library/playlist-folders",
+			userToken: userToken,
+			httpMethod: "POST",
+			parameters: [
+				"attributes": [
+					"name": folderName
+				],
+				"relationships": [
+					"parent": [
+						"data": [
+							[
+								"id": "p.playlistsroot",
+								"type": "library-playlist-folders"
+							]
+						]
+					]
+				]
+			]
+		)
+		
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			switch response.result {
+			case .success(_):
+				completion(true)
+			case .failure(let error):
+				print(error)
+				completion(false)
+			}
+		}.resume()
+	}
 }
 
 // MARK: - Intent
