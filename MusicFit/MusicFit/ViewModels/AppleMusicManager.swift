@@ -291,6 +291,37 @@ extension AppleMusicManager {
 		}.resume()
 	}
 	
+	// TODO: Add formal documentation to this function
+	func getMusicFitPlaylistId(musicFitStatus: MusicFitStatus) -> (Bool, String) {
+		guard let url = Bundle.main.url(forResource: "MusicFitPlaylists.json", withExtension: nil) else { return (false, "URL NOT FOUND") }
+
+		do {
+			let data = try Data(contentsOf: url)
+
+			let json = try JSON(data: data)
+			
+			switch musicFitStatus {
+			case .Running:
+				let playlistId = json["RunningPlaylistId"].stringValue
+				
+				return playlistId == "" ? (false, "") : (true, playlistId)
+			case .Walking:
+				let playlistId = json["WalkingPlaylistId"].stringValue
+				
+				return playlistId == "" ? (false, "") : (true, playlistId)
+			case .Resting:
+				let playlistId = json["RestingPlaylistId"].stringValue
+				
+				return playlistId == "" ? (false, "") : (true, playlistId)
+			}
+
+		} catch {
+			print(error)
+		}
+		
+		return (false, "")
+	}
+	
 	// See Also: https://developer.apple.com/documentation/applemusicapi/create_a_new_library_playlist
 	// TODO: Add formal documentation to this function
 	func createPlaylistWithCatelogSongs(_ userToken: String, playlistName: String, playlistDescription: String, songCatelogIds: [String], completion: @escaping(Playlist) -> Void) {
