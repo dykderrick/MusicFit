@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct PlaylistView: View {
-	@State private var playlistCount = [0, 1, 2, 3]
+	@ObservedObject var musicManager: AppleMusicManager
+	@State private var playlistCount = [0, 1, 2]
+	@State private var showingPlaylistCreationSheet = false
 	
     var body: some View {
 		NavigationView {
@@ -26,16 +28,26 @@ struct PlaylistView: View {
 				Spacer()
 			}
 		}
+		// Showing a playlist creation sheet if the user has empty playlists for MusicFit.
+		.onAppear() {
+			showingPlaylistCreationSheet = musicManager.musicFitPlaylistsAreEmpty()
+		}
+		.sheet(isPresented: $showingPlaylistCreationSheet) {
+			PlaylistCreationSheet(musicManager: musicManager)
+		}
+		
     }
 }
 
 struct PlaylistView_Previews: PreviewProvider {
     static var previews: some View {
-        PlaylistView()
+		let musicManager = AppleMusicManager()
+		
+        PlaylistView(musicManager: musicManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		PlaylistView()
+		PlaylistView(musicManager: musicManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }
