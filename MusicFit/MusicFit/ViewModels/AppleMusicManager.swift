@@ -14,6 +14,7 @@ import StoreKit
 class AppleMusicManager: ObservableObject {
 	private static let developerToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjVRTEQ3VFY0SDQifQ.eyJpc3MiOiJHODJDTE5WQTY0IiwiZXhwIjoxNjY3Njg0MDY1LCJpYXQiOjE2NTE5MTYwNjV9.KuxfoPON751gB-_-xWuucC4ppPTPYQs6_yznr8GC6FTxJfsnvIbGeVvspd6n1yZXtbMCr_vGYwlyouymI8biHg"  // FIXME: Can we hide it somehow?
     private let apiRootPath = "https://api.music.apple.com/v1"  // Apple Music API Root Path
+	private let fileHandler = FileHandler()  // Handle JSON File
 	
     @Published var currentPlayingSong = Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""])
 	@Published var musicPlayer = MPMusicPlayerController.systemMusicPlayer  // Use iOS/iPadOS Msuic.app
@@ -291,40 +292,54 @@ extension AppleMusicManager {
 		}.resume()
 	}
 	
-	// TODO: Add formal documentation to this function
-	func getMusicFitPlaylistId(musicFitStatus: MusicFitStatus) -> (Bool, String) {
-		guard let url = Bundle.main.url(forResource: "MusicFitPlaylists.json", withExtension: nil) else { return (false, "URL NOT FOUND") }
-
-		do {
-			let data = try Data(contentsOf: url)
-
-			let json = try JSON(data: data)
+	/// Uses "MusicFitPlaylists.json" file to fetch a corresponding playlist id for a specific MusicFit Status.
+	/// - Parameters:
+	///	  - musicFitStatus: a ``MusicFitStatus`` enumeration.
+	/// - Returns: a tuple of (Bool, String) representing getter result.
+	/// Bool value indicates if the playlist is found or not. String value indicates the found playlist id. If the Bool value is false, the String value will be "".
+	func getMusicFitPlaylistId(musicFitStatus: MusicFitStatus) -> (isFound: Bool, playlistId: String) {			
+		let json = fileHandler.getJSONDataFromFile(fileName: "MusicFitPlaylists.json")
 			
-			switch musicFitStatus {
-			case .Running:
-				let playlistId = json["RunningPlaylistId"].stringValue
+		if let json = json {
+			let playlistId = json["\(musicFitStatus.rawValue)PlaylistId"].stringValue
 				
-				return playlistId == "" ? (false, "") : (true, playlistId)
-			case .Walking:
-				let playlistId = json["WalkingPlaylistId"].stringValue
-				
-				return playlistId == "" ? (false, "") : (true, playlistId)
-			case .Resting:
-				let playlistId = json["RestingPlaylistId"].stringValue
-				
-				return playlistId == "" ? (false, "") : (true, playlistId)
-			}
-
-		} catch {
-			print(error)
+			return playlistId == "" ? (false, "") : (true, playlistId)
 		}
+		
 		
 		return (false, "")
 	}
 	
+	func setMusicFitPlaylistId(musicFitStatus: MusicFitStatus, playlistId: String) {
+//		guard let url = Bundle.main.url(forResource: "MusicFitPlaylists.json", withExtension: nil) else { return }
+		let json = fileHandler.getJSONDataFromFile(fileName: "MusicFitPlaylists.json")
+		
+//		let data = try Data(contentsOf: url)
+			
+//		var json = try JSON(data: data)
+		
+		if var json = json {
+			json["\(musicFitStatus)PlaylistId"].string = playlistId
+				
+			if let encodedData = try? JSONEncoder().encode(json) {
+				fileHandler.saveJSONDataToFile(json: encodedData, fileName: "MusicFitPlaylists.json")
+			}
+		}
+	}
+	
+	func musicFitPlaylistsAreEmpty() -> Bool {
+		var isFound = false
+		
+		MusicFitStatus.allCases.forEach {
+			isFound = isFound || getMusicFitPlaylistId(musicFitStatus: $0).isFound
+		}
+		
+		return !isFound
+	}
+	
 	// See Also: https://developer.apple.com/documentation/applemusicapi/create_a_new_library_playlist
 	// TODO: Add formal documentation to this function
-	func createPlaylistWithCatelogSongs(_ userToken: String, playlistName: String, playlistDescription: String, songCatelogIds: [String], completion: @escaping(Playlist) -> Void) {
+	func createPlaylistWithCatelogSongs(_ userToken: String, playlistName: String, playlistDescription: String, playlistFolderId: String, songCatelogIds: [String], completion: @escaping(Playlist) -> Void) {
 		
 		var tracksData = [[String: String]]()
 		for songCatelogId in songCatelogIds {
@@ -348,7 +363,7 @@ extension AppleMusicManager {
 					"parent": [
 						"data": [
 							[
-								"id": "p.playlistsroot",
+								"id": playlistFolderId,
 								"type": "library-playlist-folders"
 							]
 						]
@@ -388,7 +403,7 @@ extension AppleMusicManager {
 	
 	// See Also: https://developer.apple.com/documentation/applemusicapi/create_a_new_library_playlist_folder
 	// TODO: Add formal documentation to this function
-	func createLibraryPlaylistFolder(_ userToken: String, folderName: String, completion: @escaping(Bool) -> Void) {
+	func createLibraryPlaylistFolder(_ userToken: String, folderName: String, completion: @escaping((Bool, String)) -> Void) {
 		let musicRequest = wrapMusicRequest(
 			urlSting: "\(apiRootPath)/me/library/playlist-folders",
 			userToken: userToken,
@@ -412,11 +427,13 @@ extension AppleMusicManager {
 		
 		musicRequest.validate().responseDecodable(of: JSON.self) { response in
 			switch response.result {
-			case .success(_):
-				completion(true)
+			case .success(let value):
+				let createdFolderId = JSON(value)["data"].array![0]["id"].stringValue
+				
+				completion((true, createdFolderId))
 			case .failure(let error):
 				print(error)
-				completion(false)
+				completion((false, ""))
 			}
 		}.resume()
 	}
@@ -429,5 +446,41 @@ extension AppleMusicManager {
 		musicPlayer.setQueue(with: [song.id])
 		musicPlayer.play()
 		isPlaying = true
+	}
+	
+	func initMusicFitPlaylists(completion: @escaping(Bool) -> Void) {
+		self.getUserToken { userToken in
+			self.createLibraryPlaylistFolder(userToken, folderName: "MusicFit") { isCreated, folderId in
+				if !isCreated {
+					completion(false)
+				}
+				
+				// TODO: Change song catelog ids.
+				self.createPlaylistWithCatelogSongs(userToken, playlistName: "Running", playlistDescription: "This is MusicFit playlist for running.", playlistFolderId: folderId, songCatelogIds: ["1450695739", "1369380479"]) {runningPlaylist in
+					// TODO: Handle Running Playlist
+					print(runningPlaylist)
+					self.setMusicFitPlaylistId(musicFitStatus: .Running, playlistId: runningPlaylist.id)
+					print("RUNNING PLAYLIST ID: \(self.getMusicFitPlaylistId(musicFitStatus: .Running))")
+				}
+				
+				// TODO: Change song catelog ids.
+				self.createPlaylistWithCatelogSongs(userToken, playlistName: "Walking", playlistDescription: "This is MusicFit playlist for walking.", playlistFolderId: folderId, songCatelogIds: ["1544494722", "1544491234"]) { walkingPlaylist in
+					//TODO: Handle Walking Playlist
+					print(walkingPlaylist)
+					self.setMusicFitPlaylistId(musicFitStatus: .Walking, playlistId: walkingPlaylist.id)
+					print("WALKING PLAYLIST ID: \(self.getMusicFitPlaylistId(musicFitStatus: .Walking))")
+				}
+				
+				// TODO: Change song catelog ids.
+				self.createPlaylistWithCatelogSongs(userToken, playlistName: "Resting", playlistDescription: "This is MusicFit playlist for resting.", playlistFolderId: folderId, songCatelogIds: ["1590368453", "1452859410"]) { restingPlaylist in
+					//TODO: Handle Resting Playlist
+					print(restingPlaylist)
+					self.setMusicFitPlaylistId(musicFitStatus: .Resting, playlistId: restingPlaylist.id)
+					print("RESTING PLAYLIST ID: \(self.getMusicFitPlaylistId(musicFitStatus: .Resting))")
+				}
+				
+				completion(true)
+			}
+		}
 	}
 }

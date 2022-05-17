@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum MusicFitStatus {
-	case Running
-	case Walking
-	case Resting
+enum MusicFitStatus: String, CaseIterable {
+	case Running = "Running"
+	case Walking = "Walking"
+	case Resting = "Resting"
 }

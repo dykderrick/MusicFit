@@ -10,10 +10,11 @@ import SwiftUI
 @main
 struct MusicFitApp: App {
 	let musicManager = AppleMusicManager()
+	let fileHandler = FileHandler()
 	
     var body: some Scene {
         WindowGroup {
-            ContentView(musicManager: musicManager)
+			ContentView(musicManager: musicManager, fileHandler: fileHandler)
         }
     }
 }

@@ -11,6 +11,7 @@ import SwiftUI
 
 struct ContentView: View {
 	@ObservedObject var musicManager: AppleMusicManager
+	var fileHandler: FileHandler
 	@State private var selection = 0
 	
     var body: some View {
@@ -24,7 +25,7 @@ struct ContentView: View {
 					}
 				}
 			
-			PlaylistView()
+			PlaylistView(musicManager: musicManager)
 				.tag(1)
 				.tabItem {
 					VStack {
@@ -53,13 +54,18 @@ struct ContentView: View {
 		}
 		.accentColor(Color(hex: "#25E495"))
 		.onAppear() {
+			// Copy Bundle file MusicFitPlaylists.json to App Documents directory.
+			if !fileHandler.fileInDocumentDirectory(file: "MusicFitPlaylists.json") {
+				fileHandler.copyFileFromBundleToDocumentsFolder(sourceFile: "MusicFitPlaylists.json")
+			}
+			
 			SKCloudServiceController.requestAuthorization { (status) in
 				if status == .authorized {
 					musicManager.getUserToken { userToken in
 						print(userToken)
 						
 						/*
-						musicManager.createPlaylistWithCatelogSongs(userToken, playlistName: "test playlist", playlistDescription: "test description", songCatelogIds: ["1450695739", "1440811598"]) { playlist in
+						musicManager.createPlaylistWithCatelogSongs(userToken, playlistName: "test playlist", playlistDescription: "test description", playlistFolderId: "p.playlistsroot", songCatelogIds: ["1450695739", "1440811598"]) { playlist in
 							print(playlist)
 						}
 						 */
@@ -71,8 +77,9 @@ struct ContentView: View {
 						 */
 						
 						/*
-						musicManager.createLibraryPlaylistFolder(userToken, folderName: "test folder") { boolResult in
-							print(boolResult)
+						musicManager.createLibraryPlaylistFolder(userToken, folderName: "test folder") { isCreated, folderId in
+							print(isCreated)
+							print(folderId)
 						}
 						 */
 						
@@ -130,11 +137,12 @@ extension Color {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
 		let musicManager = AppleMusicManager()
+		let fileHandler = FileHandler()
 		
-        ContentView(musicManager: musicManager)
+		ContentView(musicManager: musicManager, fileHandler: fileHandler)
 			.preferredColorScheme(.dark)
 		
-		ContentView(musicManager: musicManager)
+		ContentView(musicManager: musicManager, fileHandler: fileHandler)
 			.preferredColorScheme(.light)
     }
 }
