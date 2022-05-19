@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PlaylistCreationSheet: View {
 	@ObservedObject var musicManager: AppleMusicManager
-	@State var textContent = "You Haven't Assigned MusicFit Playlist Yet."
+	@State var textContent = "You Haven't Assigned MusicFit Playlists Yet."
 	
 	let musicFitPlaylistManager: MusicFitPlaylistManager
 	
