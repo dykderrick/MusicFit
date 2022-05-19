@@ -291,7 +291,7 @@ extension AppleMusicManager {
 				completion(
 					PlaylistTracks(
 						playlistId: libraryPlaylistId,
-						trucks: songs
+						tracks: songs
 					)
 				)
 			case .failure(let error):

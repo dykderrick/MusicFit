@@ -9,10 +9,10 @@ import Foundation
 
 struct PlaylistTracks {
     var playlistId: String
-    var trucks: [Song]
+    var tracks: [Song]
     
-    init(playlistId: String, trucks: [Song]) {
+    init(playlistId: String, tracks: [Song]) {
         self.playlistId = playlistId
-        self.trucks = trucks
+        self.tracks = tracks
     }
 }
