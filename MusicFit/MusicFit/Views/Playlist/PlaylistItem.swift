@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct PlaylistItem: View {
+	@ObservedObject var musicFitPlaylistManager: MusicFitPlaylistManager
+	let musicFitStatus: MusicFitStatus
+	
     var body: some View {
 		HStack (spacing: 40) {
 			Image(systemName: "play.fill")
@@ -20,7 +23,7 @@ struct PlaylistItem: View {
 //				.frame(width: UIScreen.main.bounds.width - 2000, height: nil)
 			
 			VStack {
-				Text("FITNESS")
+				Text(musicFitStatus.rawValue.uppercased())
 					.font(.largeTitle)
 					.foregroundColor(Color(hex: "45FFCC"))
 					.bold()
@@ -29,7 +32,6 @@ struct PlaylistItem: View {
 					
 				HStack {
 					Text("34")
-						.foregroundColor(Color(hex: "848484"))
 					Image(systemName: "heart.fill")
 						.foregroundColor(Color(hex: "#25E495"))
 					Spacer()
@@ -39,7 +41,8 @@ struct PlaylistItem: View {
 				.frame(width: 150.0)
 				
 				HStack {
-					Text("234")
+					Text(String(musicFitPlaylistManager.musicFitPlaylistTrackCount[musicFitStatus] ?? 0))
+						.foregroundColor(Color(hex: "848484"))
 						.foregroundColor(Color(hex: "848484"))
 					Text(" Songs")
 						.foregroundColor(Color(hex: "848484"))
@@ -56,16 +59,26 @@ struct PlaylistItem: View {
 //		.padding(.horizontal, 45.0)
 		.frame(height: UIScreen.main.bounds.height / 7)
 		.background(.white.opacity(0.1))
+		.onAppear() {
+			musicFitPlaylistManager.prepareMusicFitPlaylistTracks(musicFitStatus: musicFitStatus) { playlistTracksPreparedResult in
+				// TODO: Handle here
+				print(playlistTracksPreparedResult)
+			}
+		}
     }
 }
 
 struct PlaylistItem_Previews: PreviewProvider {
     static var previews: some View {
-        PlaylistItem()
+		let musicManager = AppleMusicManager()
+		let fileHandler = FileHandler()
+		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
+		
+		PlaylistItem(musicFitPlaylistManager: musicFitPlaylistManager, musicFitStatus: .Resting)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		PlaylistItem()
+		PlaylistItem(musicFitPlaylistManager: musicFitPlaylistManager, musicFitStatus: .Walking)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

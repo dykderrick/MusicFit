@@ -7,13 +7,20 @@
 
 import Foundation
 
-class MusicFitPlaylistManager {
+class MusicFitPlaylistManager: ObservableObject {
 	let musicManager: AppleMusicManager
 	let fileHandler: FileHandler
+	
+	@Published var musicFitPlaylistTrackCount = [MusicFitStatus:Int]()
 	
 	init(musicManager: AppleMusicManager, fileHandler: FileHandler) {
 		self.musicManager = musicManager
 		self.fileHandler = fileHandler
+		
+		// init playlist count dict
+		MusicFitStatus.allCases.forEach {
+			musicFitPlaylistTrackCount[$0] = 0
+		}
 	}
 	
 	/// Uses "MusicFitPlaylists.json" file to fetch a corresponding playlist id for a specific MusicFit Status.
@@ -103,6 +110,21 @@ class MusicFitPlaylistManager {
 			}
 		} else {
 			completion(false)
+		}
+	}
+	
+	func prepareMusicFitPlaylistTracks(musicFitStatus: MusicFitStatus, completion: @escaping((isPrepared: Bool, playlistTracks: PlaylistTracks)) -> Void) {
+		let musicFitPlaylistIdGetResult = self.getMusicFitPlaylistId(musicFitStatus: musicFitStatus)
+		
+		if !musicFitPlaylistIdGetResult.isFound {
+			completion((false, PlaylistTracks(playlistId: "", tracks: [Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""])])))
+		} else {
+			self.musicManager.getUserToken { userToken in
+				self.musicManager.getLibraryPlaylistTracks(userToken, libraryPlaylistId: musicFitPlaylistIdGetResult.playlistId) { playlistTracks in
+					self.musicFitPlaylistTrackCount[musicFitStatus] = playlistTracks.tracks.count // set playlist track count
+					completion((true, playlistTracks))
+				}
+			}
 		}
 	}
 }

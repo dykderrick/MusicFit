@@ -9,16 +9,16 @@ import SwiftUI
 
 struct PlaylistView: View {
 	@ObservedObject var musicManager: AppleMusicManager
-	@State private var playlistCount = [0, 1, 2]
-	@State private var showingPlaylistCreationSheet = false
 	let musicFitPlaylistManager: MusicFitPlaylistManager
+	
+	@State private var showingPlaylistCreationSheet = false
 	
     var body: some View {
 		NavigationView {
 			VStack {
 				List {
-					ForEach(playlistCount, id:\.self) { num in
-						PlaylistItem()
+					ForEach(MusicFitStatus.allCases, id:\.self) { status in
+						PlaylistItem(musicFitPlaylistManager: musicFitPlaylistManager, musicFitStatus: status)
 							.listRowBackground(Color.black)
 					}
 					.listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0))
