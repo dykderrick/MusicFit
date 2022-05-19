@@ -11,7 +11,9 @@ import SwiftUI
 
 struct ContentView: View {
 	@ObservedObject var musicManager: AppleMusicManager
-	var fileHandler: FileHandler
+	let fileHandler: FileHandler
+	let intentHandler: ContentViewIntentHandler
+	let musicFitPlaylistManager: MusicFitPlaylistManager
 	@State private var selection = 0
 	
     var body: some View {
@@ -25,7 +27,7 @@ struct ContentView: View {
 					}
 				}
 			
-			PlaylistView(musicManager: musicManager)
+			PlaylistView(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
 				.tag(1)
 				.tabItem {
 					VStack {
@@ -55,9 +57,10 @@ struct ContentView: View {
 		.accentColor(Color(hex: "#25E495"))
 		.onAppear() {
 			// Copy Bundle file MusicFitPlaylists.json to App Documents directory.
-			if !fileHandler.fileInDocumentDirectory(file: "MusicFitPlaylists.json") {
-				fileHandler.copyFileFromBundleToDocumentsFolder(sourceFile: "MusicFitPlaylists.json")
-			}
+			intentHandler.setMusicFitPlaylistMetadata(fileHandler)
+			
+			// Make sure all playlists previously set are available. If not available, set to "".
+			intentHandler.setMusicFitPlaylistsAvailability(musicManager)
 			
 			SKCloudServiceController.requestAuthorization { (status) in
 				if status == .authorized {
@@ -83,7 +86,7 @@ struct ContentView: View {
 						}
 						 */
 						
-						print("RESTING TEST: \(musicManager.getMusicFitPlaylistId(musicFitStatus: .Resting))")
+						print("RESTING TEST: \(musicFitPlaylistManager.getMusicFitPlaylistId(musicFitStatus: .Resting))")
 						
                         
                         musicManager.getAllLibraryPlaylists(userToken) { playlists in
@@ -138,11 +141,13 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
 		let musicManager = AppleMusicManager()
 		let fileHandler = FileHandler()
+		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
+		let intentHandler = ContentViewIntentHandler(musicFitPlaylistManager: musicFitPlaylistManager)
 		
-		ContentView(musicManager: musicManager, fileHandler: fileHandler)
+		ContentView(musicManager: musicManager, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)
 		
-		ContentView(musicManager: musicManager, fileHandler: fileHandler)
+		ContentView(musicManager: musicManager, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.light)
     }
 }

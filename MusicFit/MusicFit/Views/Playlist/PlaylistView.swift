@@ -11,6 +11,7 @@ struct PlaylistView: View {
 	@ObservedObject var musicManager: AppleMusicManager
 	@State private var playlistCount = [0, 1, 2]
 	@State private var showingPlaylistCreationSheet = false
+	let musicFitPlaylistManager: MusicFitPlaylistManager
 	
     var body: some View {
 		NavigationView {
@@ -30,10 +31,10 @@ struct PlaylistView: View {
 		}
 		// Showing a playlist creation sheet if the user has empty playlists for MusicFit.
 		.onAppear() {
-			showingPlaylistCreationSheet = musicManager.musicFitPlaylistsAreEmpty()
+			showingPlaylistCreationSheet = musicFitPlaylistManager.musicFitPlaylistsAreEmpty()
 		}
 		.sheet(isPresented: $showingPlaylistCreationSheet) {
-			PlaylistCreationSheet(musicManager: musicManager)
+			PlaylistCreationSheet(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
 		}
 		
     }
@@ -42,12 +43,14 @@ struct PlaylistView: View {
 struct PlaylistView_Previews: PreviewProvider {
     static var previews: some View {
 		let musicManager = AppleMusicManager()
+		let fileHandler = FileHandler()
+		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
 		
-        PlaylistView(musicManager: musicManager)
+		PlaylistView(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		PlaylistView(musicManager: musicManager)
+		PlaylistView(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

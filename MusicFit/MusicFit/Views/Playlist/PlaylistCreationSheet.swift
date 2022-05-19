@@ -11,13 +11,15 @@ struct PlaylistCreationSheet: View {
 	@ObservedObject var musicManager: AppleMusicManager
 	@State var textContent = "You Haven't Assigned MusicFit Playlist Yet."
 	
+	let musicFitPlaylistManager: MusicFitPlaylistManager
+	
     var body: some View {
 		VStack {
 			Text(textContent)
 				.font(.title2)
 			Spacer()
 			Button(action: {
-				musicManager.initMusicFitPlaylists { isInitiated in
+				musicFitPlaylistManager.initMusicFitPlaylists { isInitiated in
 					// TODO: Handle init result
 					textContent = "Thanks. You can now close this sheet."
 					print("Init result: \(isInitiated)")
@@ -33,12 +35,14 @@ struct PlaylistCreationSheet: View {
 struct PlaylistCreationSheet_Previews: PreviewProvider {
     static var previews: some View {
 		let musicManager = AppleMusicManager()
+		let fileHandler = FileHandler()
+		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
 		
-        PlaylistCreationSheet(musicManager: musicManager)
+		PlaylistCreationSheet(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		PlaylistCreationSheet(musicManager: musicManager)
+		PlaylistCreationSheet(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }
