@@ -13,10 +13,10 @@ struct PlaylistItem: View {
 	
     var body: some View {
 		HStack (spacing: 40) {
-			Image(systemName: "play.fill")
+			Image("\(musicFitStatus.rawValue)DefaultPlaylistCover")
 				.resizable()
-				.frame(width: 93.0, height: 93.0)
-//				.cornerRadius(20)
+				.frame(width: 110.0, height: 110.0)
+				.cornerRadius(20)
 //				.shadow(radius: 10)
 			
 //			Spacer()
@@ -57,8 +57,10 @@ struct PlaylistItem: View {
 				.frame(width: 30.0)
 		}
 //		.padding(.horizontal, 45.0)
-		.frame(height: UIScreen.main.bounds.height / 7)
-		.background(.white.opacity(0.1))
+		.frame(width: UIScreen.main.bounds.width - 10, height: UIScreen.main.bounds.height / 7)
+		.background(
+			RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color(.white).opacity(0.1))
+		)
 		.onAppear() {
 			musicFitPlaylistManager.prepareMusicFitPlaylistTracks(musicFitStatus: musicFitStatus) { playlistTracksPreparedResult in
 				// TODO: Handle here
