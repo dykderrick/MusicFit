@@ -177,17 +177,17 @@ extension AppleMusicManager {
 				let dataArray = (JSON(value)["data"]).array!
 				
 				for playlist in dataArray {
-					let atrributes = playlist["attributes"]
+					let attributes = playlist["attributes"]
 					
 					playlists.append(
 						Playlist(
 							id: playlist["id"].stringValue,
-							name: atrributes["name"].stringValue,
-							description: "",
-							isPublic: atrributes["isPublic"].boolValue,
-							canEdit: atrributes["canEdit"].boolValue,
-							dateAdded: ISO8601DateFormatter().date(from: atrributes["dateAdded"].stringValue) ?? Date(),
-							artworkURL: ""
+							name: attributes["name"].stringValue,
+							description: attributes["description"]["standard"].stringValue,
+							isPublic: attributes["isPublic"].boolValue,
+							canEdit: attributes["canEdit"].boolValue,
+							dateAdded: ISO8601DateFormatter().date(from: attributes["dateAdded"].stringValue) ?? Date(),
+							artworkURL: attributes["artwork"]["url"].stringValue
 						)
 					)
 				}
@@ -215,6 +215,10 @@ extension AppleMusicManager {
 				let metadata = (JSON(value)["data"]).array![0]
 				let attributes = (JSON(value)["data"]).array![0]["attributes"]
 				let playlistExists = attributes["name"].string != nil  // If the playlist doesn't exist, the attributes won't have a name field.
+				
+				if metadata["id"].stringValue == "p.7PkeL3Qu08mQKXQ" {
+					print("DEBUG HERE")
+				}
 				
 				if playlistExists {
 					completion(
