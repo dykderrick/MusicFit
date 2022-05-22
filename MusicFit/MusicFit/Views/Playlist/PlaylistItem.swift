@@ -81,7 +81,7 @@ struct PlaylistItem_Previews: PreviewProvider {
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
 		PlaylistItem(musicFitPlaylistManager: musicFitPlaylistManager, musicFitStatus: .Walking)
-			.preferredColorScheme(.dark)
+			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }
 }

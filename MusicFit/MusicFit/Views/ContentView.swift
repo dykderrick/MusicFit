@@ -146,8 +146,10 @@ struct ContentView_Previews: PreviewProvider {
 		
 		ContentView(musicManager: musicManager, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)
+			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
 		ContentView(musicManager: musicManager, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.light)
+			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }
 }
