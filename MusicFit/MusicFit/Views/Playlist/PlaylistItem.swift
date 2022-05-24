@@ -12,7 +12,7 @@ struct PlaylistItem: View {
 	let musicFitStatus: MusicFitStatus
 	
     var body: some View {
-		HStack (spacing: 40) {
+		HStack(spacing: 40) {
 			Image("\(musicFitStatus.rawValue)DefaultPlaylistCover")
 				.resizable()
 				.frame(width: 110.0, height: 110.0)
