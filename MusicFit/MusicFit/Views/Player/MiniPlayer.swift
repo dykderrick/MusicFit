@@ -34,7 +34,9 @@ struct MiniPlayer: View {
 
 struct MiniPlayer_Previews: PreviewProvider {
     static var previews: some View {
-		let musicPlayer = MusicPlayer()
+		let FileHandler = FileHandler()
+		let musicManager = AppleMusicManager()
+		let musicPlayer = MusicPlayer(fileHandler: FileHandler, musicManager: musicManager)
 		
 		MiniPlayer(musicPlayer: musicPlayer)
 			.preferredColorScheme(.dark)

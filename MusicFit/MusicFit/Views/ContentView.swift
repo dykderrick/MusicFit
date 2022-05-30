@@ -146,7 +146,7 @@ struct ContentView_Previews: PreviewProvider {
 		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
 		let intentHandler = ContentViewIntentHandler(musicFitPlaylistManager: musicFitPlaylistManager)
 		let workoutManager = WorkoutManager()
-		let musicPlayer = MusicPlayer()
+		let musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
 		
 		
 		ContentView(musicManager: musicManager, workoutManager: workoutManager, musicPlayer: musicPlayer, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)

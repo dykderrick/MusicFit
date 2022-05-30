@@ -23,17 +23,20 @@ struct NowView: View {
 			
 			NowStatus(workoutManager: workoutManager)
 			
-			UpNextsList()
+			UpNextsList(musicPlayer: musicPlayer)
 			
 			MiniPlayer(musicPlayer: musicPlayer)
 		}
+		.padding()
     }
 }
 
 struct NowView_Previews: PreviewProvider {
     static var previews: some View {
 		let workoutManager = WorkoutManager()
-		let musicPlayer = MusicPlayer()
+		let fileHandler = FileHandler()
+		let musicManager = AppleMusicManager()
+		let musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
 		
 		NowView(workoutManager: workoutManager, musicPlayer: musicPlayer)
 			.preferredColorScheme(.dark)

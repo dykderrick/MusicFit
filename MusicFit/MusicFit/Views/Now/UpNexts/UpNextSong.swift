@@ -6,24 +6,33 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct UpNextSong: View {
+	var song: Song
+	
     var body: some View {
 		HStack(alignment: .center, spacing: 10) {
-			Image(systemName: "figure.walk")
-				.resizable()
-				.frame(width: 54, height: 54)
+			WebImage(
+				url: URL(
+					string: song.artworkURL
+						.replacingOccurrences(of: "{w}", with: "60")
+						.replacingOccurrences(of: "{h}", with: "60")
+				)
+			)
+			.cornerRadius(20)
 			
 			VStack(alignment: .leading, spacing: 10) {
-				Text("Airwaves")
+				Text(song.name)
 					.foregroundColor(.white)
 					.font(.system(size: 13, weight: .regular))
 				
-				Text("will.i.am / Britney Spears")
+				Text(song.artistName)
 					.foregroundColor(Color(hex: "#848484"))
 					.font(.system(size: 11, weight: .regular))
 				
-				Text("04:45")
+				// FIXME: Song Duration isn't Correct
+				Text("\(String(Int(song.durationInMillis / 60000))):\(String(Int(song.durationInMillis / 60000 % 1 * 60)))")  // TODO: Way too ugly here.
 					.foregroundColor(Color(hex: "#848484"))
 					.font(.system(size: 11, weight: .regular))
 			}
@@ -39,11 +48,13 @@ struct UpNextSong: View {
 
 struct UpNextSong_Previews: PreviewProvider {
     static var previews: some View {
-        UpNextSong()
+		let song = Song(id: "", name: "Unknown", artistName: "Unknown Artist", artworkURL: "", genreNames: [""], durationInMillis: 194088)
+		
+		UpNextSong(song: song)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		UpNextSong()
+		UpNextSong(song: song)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

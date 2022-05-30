@@ -22,7 +22,7 @@ struct MusicFitApp: App {
 		musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
 		intentHandler = ContentViewIntentHandler(musicFitPlaylistManager: musicFitPlaylistManager)
 		workoutManager = WorkoutManager()
-		musicPlayer = MusicPlayer()
+		musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
 	}
 	
     var body: some Scene {

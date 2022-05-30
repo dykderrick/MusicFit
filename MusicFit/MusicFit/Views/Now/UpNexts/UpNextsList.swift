@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct UpNextsList: View {
+	@ObservedObject var musicPlayer: MusicPlayer
+	
     var body: some View {
 		List {
 			HStack(alignment: .center, spacing: 50) {
@@ -23,19 +25,24 @@ struct UpNextsList: View {
 				.tint(Color(hex: "#D8D8D8"))
 			}
 			
-			UpNextSong()
-			UpNextSong()
+			ForEach(musicPlayer.upNextSongsQueue) { song in
+				UpNextSong(song: song)
+			}
 		}
     }
 }
 
 struct UpNextsList_Previews: PreviewProvider {
     static var previews: some View {
-        UpNextsList()
+		let fileHandler = FileHandler()
+		let musicManager = AppleMusicManager()
+		let musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
+		
+		UpNextsList(musicPlayer: musicPlayer)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		UpNextsList()
+		UpNextsList(musicPlayer: musicPlayer)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

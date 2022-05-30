@@ -46,7 +46,7 @@ struct PlaylistView_Previews: PreviewProvider {
 		let musicManager = AppleMusicManager()
 		let fileHandler = FileHandler()
 		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
-		let musicPlayer = MusicPlayer()
+		let musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
 		
 		PlaylistView(musicManager: musicManager, musicPlayer: musicPlayer, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)

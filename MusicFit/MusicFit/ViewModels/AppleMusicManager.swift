@@ -144,7 +144,8 @@ extension AppleMusicManager {
 							name: attributes["name"].string!,
 							artistName: attributes["artistName"].string!,
 							artworkURL: attributes["artwork"]["url"].string!,
-							genreNames: genreNames
+							genreNames: genreNames,
+							durationInMillis: attributes["durationInMillis"].intValue
 						)
 					)
 				}
@@ -287,7 +288,8 @@ extension AppleMusicManager {
 							name: attributes["name"].stringValue,
 							artistName: attributes["artistName"].stringValue,
 							artworkURL: attributes["artwork"]["url"].stringValue,
-							genreNames: genreNames
+							genreNames: genreNames,
+							durationInMillis: attributes["durationInMillis"].intValue
 						)
 					)
 				}

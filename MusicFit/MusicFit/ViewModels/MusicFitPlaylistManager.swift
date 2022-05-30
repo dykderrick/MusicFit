@@ -117,7 +117,7 @@ class MusicFitPlaylistManager: ObservableObject {
 		let musicFitPlaylistIdGetResult = self.getMusicFitPlaylistId(musicFitStatus: musicFitStatus)
 		
 		if !musicFitPlaylistIdGetResult.isFound {
-			completion((false, PlaylistTracks(playlistId: "", tracks: [Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""])])))
+			completion((false, PlaylistTracks(playlistId: "", tracks: [Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""], durationInMillis: 194088)])))
 		} else {
 			self.musicManager.getUserToken { userToken in
 				self.musicManager.getLibraryPlaylistTracks(userToken, libraryPlaylistId: musicFitPlaylistIdGetResult.playlistId) { playlistTracks in
