@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NowStatus: View {
+	@ObservedObject var workoutManager: WorkoutManager
+	
     var body: some View {
 		VStack(alignment: .leading, spacing: 40) {
 			HStack(alignment: .center, spacing: 100) {
@@ -17,7 +19,7 @@ struct NowStatus: View {
 						.font(.system(size: 19, weight: .semibold))
 					
 					HStack {
-						Text("RUNNING")
+						Text(workoutManager.predictedStatus.rawValue.uppercased())
 							.foregroundColor(.white)
 							.font(.system(size: 19, weight: .semibold))
 						Image(systemName: "figure.walk")
@@ -28,8 +30,10 @@ struct NowStatus: View {
 					.underline()
 			}
 			
+			// TODO: Handle Button Disable Function
 			Button(action: {
-				
+				// Handle workout start intent
+				workoutManager.startWorkout()
 			}) {
 				Text("Start Workout")
 					.font(.system(size: 20, weight: .semibold))
@@ -51,11 +55,13 @@ struct NowStatus: View {
 
 struct NowStatus_Previews: PreviewProvider {
     static var previews: some View {
-        NowStatus()
+		let workoutManager = WorkoutManager()
+		
+		NowStatus(workoutManager: workoutManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		NowStatus()
+		NowStatus(workoutManager: workoutManager)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

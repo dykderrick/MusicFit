@@ -11,6 +11,8 @@ import SwiftUI
 
 struct ContentView: View {
 	@ObservedObject var musicManager: AppleMusicManager
+	@ObservedObject var workoutManager: WorkoutManager
+	@ObservedObject var musicPlayer: MusicPlayer
 	let fileHandler: FileHandler
 	let intentHandler: ContentViewIntentHandler
 	let musicFitPlaylistManager: MusicFitPlaylistManager
@@ -18,7 +20,7 @@ struct ContentView: View {
 	
     var body: some View {
 		TabView(selection: $selection) {
-			NowView()
+			NowView(workoutManager: workoutManager, musicPlayer: musicPlayer)
 				.tag(0)
 				.tabItem {
 					VStack {
@@ -27,7 +29,7 @@ struct ContentView: View {
 					}
 				}
 			
-			PlaylistView(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
+			PlaylistView(musicManager: musicManager, musicPlayer: musicPlayer, musicFitPlaylistManager: musicFitPlaylistManager)
 				.tag(1)
 				.tabItem {
 					VStack {
@@ -143,12 +145,15 @@ struct ContentView_Previews: PreviewProvider {
 		let fileHandler = FileHandler()
 		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
 		let intentHandler = ContentViewIntentHandler(musicFitPlaylistManager: musicFitPlaylistManager)
+		let workoutManager = WorkoutManager()
+		let musicPlayer = MusicPlayer()
 		
-		ContentView(musicManager: musicManager, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
+		
+		ContentView(musicManager: musicManager, workoutManager: workoutManager, musicPlayer: musicPlayer, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		ContentView(musicManager: musicManager, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
+		ContentView(musicManager: musicManager, workoutManager: workoutManager, musicPlayer: musicPlayer, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

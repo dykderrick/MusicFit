@@ -16,9 +16,9 @@ class AppleMusicManager: ObservableObject {
     private let apiRootPath = "https://api.music.apple.com/v1"  // Apple Music API Root Path
 	private let fileHandler = FileHandler()  // Handle JSON File
 	
-    @Published var currentPlayingSong = Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""])
-	@Published var musicPlayer = MPMusicPlayerController.systemMusicPlayer  // Use iOS/iPadOS Msuic.app
-	@Published var isPlaying = false
+//    @Published var currentPlayingSong = Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""])
+//	@Published var musicPlayer = MPMusicPlayerController.systemMusicPlayer  // Use iOS/iPadOS Msuic.app
+//	@Published var isPlaying = false
 
 	// See Also: https://stackoverflow.com/questions/65057320/skcloudservicecontroller-requestusertoken-freezes-on-ios-14-2
 	// TODO: Add formal documentation to this function
@@ -409,9 +409,9 @@ extension AppleMusicManager {
 // MARK: - Intent
 extension AppleMusicManager {
 	func playSong(_ song: Song) {
-		currentPlayingSong = song
-		musicPlayer.setQueue(with: [song.id])
-		musicPlayer.play()
-		isPlaying = true
+//		currentPlayingSong = song
+//		musicPlayer.setQueue(with: [song.id])
+//		musicPlayer.play()
+//		isPlaying = true
 	}
 }

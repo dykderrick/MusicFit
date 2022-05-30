@@ -8,17 +8,19 @@
 import SwiftUI
 
 struct MiniPlayer: View {
+	@ObservedObject var musicPlayer: MusicPlayer
+	
     var body: some View {
 		HStack (spacing: 50) {
-			Text("Not Playling")
-			Text("Unknown Artist")
-			Button(action: {
+			Text(musicPlayer.currentPlayingSong.name)  // Song name
+			Text(musicPlayer.currentPlayingSong.artistName)  // Artist Name
+			Button(action: {  // Pause / Resume Button
 				
 			}) {
 				Image(systemName: "play.fill")
 					.foregroundColor(Color(hex: "D8D8D8"))
 			}
-			Button(action: {
+			Button(action: {  // Next Song Button
 				
 			}) {
 				Image(systemName: "forward.fill")
@@ -32,7 +34,9 @@ struct MiniPlayer: View {
 
 struct MiniPlayer_Previews: PreviewProvider {
     static var previews: some View {
-        MiniPlayer()
+		let musicPlayer = MusicPlayer()
+		
+		MiniPlayer(musicPlayer: musicPlayer)
 			.preferredColorScheme(.dark)
     }
 }

@@ -13,18 +13,24 @@ struct MusicFitApp: App {
 	let fileHandler: FileHandler
 	let intentHandler: ContentViewIntentHandler
 	let musicFitPlaylistManager: MusicFitPlaylistManager
+	let workoutManager: WorkoutManager
+	let musicPlayer: MusicPlayer
 	
 	init() {
 		musicManager = AppleMusicManager()
 		fileHandler = FileHandler()
 		musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
 		intentHandler = ContentViewIntentHandler(musicFitPlaylistManager: musicFitPlaylistManager)
+		workoutManager = WorkoutManager()
+		musicPlayer = MusicPlayer()
 	}
 	
     var body: some Scene {
         WindowGroup {
 			ContentView(
 				musicManager: musicManager,
+				workoutManager: workoutManager,
+				musicPlayer: musicPlayer,
 				fileHandler: fileHandler,
 				intentHandler: intentHandler,
 				musicFitPlaylistManager: musicFitPlaylistManager

@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct NowView: View {
+	@ObservedObject var workoutManager: WorkoutManager
+	@ObservedObject var musicPlayer: MusicPlayer
+	
     var body: some View {
 		VStack {
 			HStack {
@@ -18,22 +21,25 @@ struct NowView: View {
 				Spacer(minLength: 80)
 			}
 			
-			NowStatus()
+			NowStatus(workoutManager: workoutManager)
 			
 			UpNextsList()
 			
-			MiniPlayer()
+			MiniPlayer(musicPlayer: musicPlayer)
 		}
     }
 }
 
 struct NowView_Previews: PreviewProvider {
     static var previews: some View {
-        NowView()
+		let workoutManager = WorkoutManager()
+		let musicPlayer = MusicPlayer()
+		
+		NowView(workoutManager: workoutManager, musicPlayer: musicPlayer)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		NowView()
+		NowView(workoutManager: workoutManager, musicPlayer: musicPlayer)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

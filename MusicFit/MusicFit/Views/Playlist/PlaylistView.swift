@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PlaylistView: View {
 	@ObservedObject var musicManager: AppleMusicManager
+	@ObservedObject var musicPlayer: MusicPlayer
 	let musicFitPlaylistManager: MusicFitPlaylistManager
 	
 	@State private var showingPlaylistCreationSheet = false
@@ -25,7 +26,7 @@ struct PlaylistView: View {
 				}
 				.navigationTitle("Playlist")
 				
-				MiniPlayer()
+				MiniPlayer(musicPlayer: musicPlayer)
 				Spacer()
 			}
 		}
@@ -45,12 +46,13 @@ struct PlaylistView_Previews: PreviewProvider {
 		let musicManager = AppleMusicManager()
 		let fileHandler = FileHandler()
 		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
+		let musicPlayer = MusicPlayer()
 		
-		PlaylistView(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
+		PlaylistView(musicManager: musicManager, musicPlayer: musicPlayer, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		PlaylistView(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
+		PlaylistView(musicManager: musicManager, musicPlayer: musicPlayer, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }
