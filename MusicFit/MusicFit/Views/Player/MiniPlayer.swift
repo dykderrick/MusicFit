@@ -9,11 +9,26 @@ import SwiftUI
 
 struct MiniPlayer: View {
 	@ObservedObject var musicPlayer: MusicPlayer
+	@ObservedObject var miniPlayerIntentHandler: MiniPlayerIntentHandler
 	
     var body: some View {
 		HStack (spacing: 50) {
-			Text(musicPlayer.currentPlayingSong.name)  // Song name
-			Text(musicPlayer.currentPlayingSong.artistName)  // Artist Name
+			Button(action: {
+				miniPlayerIntentHandler.showPlayerSheet()
+			}, label: {
+				HStack(alignment: .bottom, spacing: 40) {
+					Text(musicPlayer.currentPlayingSong.name)  // Song name
+						.font(.system(size: 20, weight: .medium))
+						.tint(.white)
+					Text(musicPlayer.currentPlayingSong.artistName)  // Artist Name
+						.font(.system(size: 15, weight: .regular))
+						.tint(Color(hex: "\(MusicFitColors.gray)"))
+				}
+				.frame(height: 54)
+			})
+			
+
+			
 			Button(action: {  // Pause / Resume Button
 				
 			}) {
@@ -28,7 +43,8 @@ struct MiniPlayer: View {
 			}
 		}
 		.frame(height: 54.0)
-		.background(.white.opacity(0.1))
+		.frame(minWidth: 300, maxWidth: .infinity)
+//		.background(Color(hex: "\(MusicFitColors.gray)"))
     }
 }
 
@@ -36,9 +52,15 @@ struct MiniPlayer_Previews: PreviewProvider {
     static var previews: some View {
 		let FileHandler = FileHandler()
 		let musicManager = AppleMusicManager()
-		let musicPlayer = MusicPlayer(fileHandler: FileHandler, musicManager: musicManager)
+		let miniPlayerIntentHandler = MiniPlayerIntentHandler()
+		let musicPlayer = MusicPlayer(fileHandler: FileHandler, musicManager: musicManager, previewSong: PreviewStatics.previewSong)
 		
-		MiniPlayer(musicPlayer: musicPlayer)
+		MiniPlayer(musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler)
 			.preferredColorScheme(.dark)
+			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
+		
+		MiniPlayer(musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler)
+			.preferredColorScheme(.light)
+			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }
 }

@@ -1,5 +1,5 @@
 //
-//  PlayerView.swift
+//  PlayerSheet.swift
 //  MusicFit
 //
 //  Created by Derrick Ding on 5/31/22.
@@ -8,7 +8,7 @@
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct PlayerView: View {
+struct PlayerSheet: View {
 	@ObservedObject var musicPlayer: MusicPlayer
 	
     var body: some View {
@@ -104,21 +104,14 @@ struct PlayerView_Previews: PreviewProvider {
 		let musicPlayer = MusicPlayer(
 			fileHandler: FileHandler(),
 			musicManager: AppleMusicManager(),
-			previewSong: Song(
-				id: "1450695739",
-				name: "bad guy",
-				artistName: "Billie Eillish",
-				artworkURL: "https://is3-ssl.mzstatic.com/image/thumb/Music115/v4/1a/37/d1/1a37d1b1-8508-54f2-f541-bf4e437dda76/19UMGIM05028.rgb.jpg/{w}x{h}bb.jpg",
-				genreNames: [""],
-				durationInMillis: 194088
-			)
+			previewSong: PreviewStatics.previewSong
 		)
 		
-		PlayerView(musicPlayer: musicPlayer)
+		PlayerSheet(musicPlayer: musicPlayer)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		PlayerView(musicPlayer: musicPlayer)
+		PlayerSheet(musicPlayer: musicPlayer)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

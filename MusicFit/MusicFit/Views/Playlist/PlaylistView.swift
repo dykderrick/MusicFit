@@ -10,6 +10,8 @@ import SwiftUI
 struct PlaylistView: View {
 	@ObservedObject var musicManager: AppleMusicManager
 	@ObservedObject var musicPlayer: MusicPlayer
+	@ObservedObject var miniPlayerIntentHandler: MiniPlayerIntentHandler
+	
 	let musicFitPlaylistManager: MusicFitPlaylistManager
 	
 	@State private var showingPlaylistCreationSheet = false
@@ -26,7 +28,7 @@ struct PlaylistView: View {
 				}
 				.navigationTitle("Playlist")
 				
-				MiniPlayer(musicPlayer: musicPlayer)
+				MiniPlayer(musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler)
 				Spacer()
 			}
 		}
@@ -37,6 +39,9 @@ struct PlaylistView: View {
 		.sheet(isPresented: $showingPlaylistCreationSheet) {
 			PlaylistCreationSheet(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
 		}
+		.sheet(isPresented: $miniPlayerIntentHandler.showingPlayerSheet) {
+			PlayerSheet(musicPlayer: musicPlayer)
+		}
 		
     }
 }
@@ -45,14 +50,15 @@ struct PlaylistView_Previews: PreviewProvider {
     static var previews: some View {
 		let musicManager = AppleMusicManager()
 		let fileHandler = FileHandler()
+		let miniPlayerIntentHandler = MiniPlayerIntentHandler()
 		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
 		let musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
 		
-		PlaylistView(musicManager: musicManager, musicPlayer: musicPlayer, musicFitPlaylistManager: musicFitPlaylistManager)
+		PlaylistView(musicManager: musicManager, musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		PlaylistView(musicManager: musicManager, musicPlayer: musicPlayer, musicFitPlaylistManager: musicFitPlaylistManager)
+		PlaylistView(musicManager: musicManager, musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

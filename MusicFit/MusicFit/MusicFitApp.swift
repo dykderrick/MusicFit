@@ -11,7 +11,8 @@ import SwiftUI
 struct MusicFitApp: App {
 	let musicManager: AppleMusicManager
 	let fileHandler: FileHandler
-	let intentHandler: ContentViewIntentHandler
+	let contentViewIntentHandler: ContentViewIntentHandler
+	let miniPlayerIntentHandler: MiniPlayerIntentHandler
 	let musicFitPlaylistManager: MusicFitPlaylistManager
 	let workoutManager: WorkoutManager
 	let musicPlayer: MusicPlayer
@@ -20,7 +21,8 @@ struct MusicFitApp: App {
 		musicManager = AppleMusicManager()
 		fileHandler = FileHandler()
 		musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
-		intentHandler = ContentViewIntentHandler(musicFitPlaylistManager: musicFitPlaylistManager)
+		contentViewIntentHandler = ContentViewIntentHandler(musicFitPlaylistManager: musicFitPlaylistManager)
+		miniPlayerIntentHandler = MiniPlayerIntentHandler()
 		workoutManager = WorkoutManager()
 		musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
 	}
@@ -31,8 +33,9 @@ struct MusicFitApp: App {
 				musicManager: musicManager,
 				workoutManager: workoutManager,
 				musicPlayer: musicPlayer,
+				miniPlayerIntentHandler: miniPlayerIntentHandler,
 				fileHandler: fileHandler,
-				intentHandler: intentHandler,
+				intentHandler: contentViewIntentHandler,
 				musicFitPlaylistManager: musicFitPlaylistManager
 			)
         }

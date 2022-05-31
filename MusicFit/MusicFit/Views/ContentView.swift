@@ -10,9 +10,12 @@ import StoreKit
 import SwiftUI
 
 struct ContentView: View {
+	// MARK: - ObservedObject variables
 	@ObservedObject var musicManager: AppleMusicManager
 	@ObservedObject var workoutManager: WorkoutManager
 	@ObservedObject var musicPlayer: MusicPlayer
+	@ObservedObject var miniPlayerIntentHandler: MiniPlayerIntentHandler
+	
 	let fileHandler: FileHandler
 	let intentHandler: ContentViewIntentHandler
 	let musicFitPlaylistManager: MusicFitPlaylistManager
@@ -20,7 +23,7 @@ struct ContentView: View {
 	
     var body: some View {
 		TabView(selection: $selection) {
-			NowView(workoutManager: workoutManager, musicPlayer: musicPlayer)
+			NowView(workoutManager: workoutManager, musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler)
 				.tag(0)
 				.tabItem {
 					VStack {
@@ -29,7 +32,12 @@ struct ContentView: View {
 					}
 				}
 			
-			PlaylistView(musicManager: musicManager, musicPlayer: musicPlayer, musicFitPlaylistManager: musicFitPlaylistManager)
+			PlaylistView(
+				musicManager: musicManager,
+				musicPlayer: musicPlayer,
+				miniPlayerIntentHandler: miniPlayerIntentHandler,
+				musicFitPlaylistManager: musicFitPlaylistManager
+			)
 				.tag(1)
 				.tabItem {
 					VStack {
@@ -56,7 +64,7 @@ struct ContentView: View {
 					}
 				}
 		}
-		.tint(Color(hex: "\(MusicFitColors.green)"))
+		.accentColor(Color(hex: "\(MusicFitColors.green)"))
 		.onAppear() {
 			// Copy Bundle file MusicFitPlaylists.json to App Documents directory.
 			intentHandler.setMusicFitPlaylistMetadata(fileHandler)
@@ -114,17 +122,43 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
 		let musicManager = AppleMusicManager()
 		let fileHandler = FileHandler()
-		let musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
-		let intentHandler = ContentViewIntentHandler(musicFitPlaylistManager: musicFitPlaylistManager)
+		let musicFitPlaylistManager = MusicFitPlaylistManager(
+			musicManager: musicManager,
+			fileHandler: fileHandler
+		)
+		let contentViewIntentHandler = ContentViewIntentHandler(
+			musicFitPlaylistManager: musicFitPlaylistManager
+		)
+		let miniPlayerIntentHandler = MiniPlayerIntentHandler()
 		let workoutManager = WorkoutManager()
-		let musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
+		let musicPlayer = MusicPlayer(
+			fileHandler: fileHandler,
+			musicManager: musicManager,
+			previewSong: PreviewStatics.previewSong
+		)
 		
 		
-		ContentView(musicManager: musicManager, workoutManager: workoutManager, musicPlayer: musicPlayer, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
+		ContentView(
+			musicManager: musicManager,
+			workoutManager: workoutManager,
+			musicPlayer: musicPlayer,
+			miniPlayerIntentHandler: miniPlayerIntentHandler,
+			fileHandler: fileHandler,
+			intentHandler: contentViewIntentHandler,
+			musicFitPlaylistManager: musicFitPlaylistManager
+		)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		ContentView(musicManager: musicManager, workoutManager: workoutManager, musicPlayer: musicPlayer, fileHandler: fileHandler, intentHandler: intentHandler, musicFitPlaylistManager: musicFitPlaylistManager)
+		ContentView(
+			musicManager: musicManager,
+			workoutManager: workoutManager,
+			musicPlayer: musicPlayer,
+			miniPlayerIntentHandler: miniPlayerIntentHandler,
+			fileHandler: fileHandler,
+			intentHandler: contentViewIntentHandler,
+			musicFitPlaylistManager: musicFitPlaylistManager
+		)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }
