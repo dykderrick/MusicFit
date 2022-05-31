@@ -36,7 +36,14 @@ struct PlayerView: View {
 					.frame(width: 300, height: 30, alignment: .leading)
 			}
 			
-			Text("PLEASE INSERT A PROGRESS BAR HERE")
+			ProgressView(value: 50, total: 100)
+				.frame(width: UIScreen.main.bounds.width - 50, height: 30)
+				.tint(Color(hex: "\(MusicFitColors.green)"))
+			
+			HStack(alignment: .center, spacing: UIScreen.main.bounds.width - 140) {
+				Text("01:24")
+				Text("04:23")
+			}
 			
 			
 			HStack(alignment: .center, spacing: 35) {
@@ -63,7 +70,7 @@ struct PlayerView: View {
 							.tint(Color(hex: "\(MusicFitColors.green)"))
 							.shadow(radius: 10)
 						
-						Image(systemName: "backward.fill")
+						Image(systemName: "pause.fill")
 							.foregroundColor(.white)
 							.font(.system(.title))
 					}
