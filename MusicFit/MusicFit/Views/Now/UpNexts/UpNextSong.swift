@@ -20,6 +20,8 @@ struct UpNextSong: View {
 						.replacingOccurrences(of: "{h}", with: "60")
 				)
 			)
+			.resizable()
+			.frame(width: 60, height: 60)
 			.cornerRadius(20)
 			
 			VStack(alignment: .leading, spacing: 10) {
@@ -39,7 +41,7 @@ struct UpNextSong: View {
 			
 			Spacer()
 			
-			Image(systemName: "heart.fill")
+			Image(systemName: "heart.fill")  // TODO: Add button to like/dislike the song
 				.foregroundColor(Color(hex: "#25E495"))
 		}
 		.frame(width: UIScreen.main.bounds.width - 130, height: UIScreen.main.bounds.height / 10)

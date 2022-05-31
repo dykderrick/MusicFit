@@ -27,6 +27,15 @@ class MusicPlayer: ObservableObject {
 		initUpNextSongsQueue()
 	}
 	
+	// This init function is only used for previews.
+	init(fileHandler: FileHandler, musicManager: AppleMusicManager, previewSong: Song) {
+		self.fileHandler = fileHandler
+		self.musicManager = musicManager
+		self.playlistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
+		
+		self.currentPlayingSong = previewSong
+	}
+	
 	// The initial songs queue should be all songs in resting playlst
 	// TODO: Add formal documentation to this function
 	fileprivate func initUpNextSongsQueue() {
