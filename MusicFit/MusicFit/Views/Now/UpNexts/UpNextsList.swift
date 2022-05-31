@@ -22,7 +22,7 @@ struct UpNextsList: View {
 				}) {
 					Image(systemName: "ellipsis")
 				}
-				.tint(Color(hex: "#D8D8D8"))
+				.tint(Color(hex: "\(MusicFitColors.gray)"))
 			}
 			
 			ForEach(musicPlayer.upNextSongsQueue) { song in

@@ -18,7 +18,7 @@ struct MiniPlayer: View {
 				
 			}) {
 				Image(systemName: "play.fill")
-					.foregroundColor(Color(hex: "D8D8D8"))
+					.foregroundColor(Color(hex: "\(MusicFitColors.gray)"))
 			}
 			Button(action: {  // Next Song Button
 				

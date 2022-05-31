@@ -33,7 +33,7 @@ struct PlaylistItem: View {
 				HStack {
 					Text("34")
 					Image(systemName: "heart.fill")
-						.foregroundColor(Color(hex: "#25E495"))
+						.foregroundColor(Color(hex: "\(MusicFitColors.green)"))
 					Spacer()
 						.frame(width: 75.0)
 				}

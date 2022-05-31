@@ -27,11 +27,11 @@ struct PlayerView: View {
 			.padding()
 			
 			VStack(alignment: .leading, spacing: 5) {
-				Text("Bad Guy")
+				Text(musicPlayer.currentPlayingSong.name)
 					.font(.system(size: 23, weight: .semibold))
 					.frame(width: 300, height: 30, alignment: .leading)
 					
-				Text("Billie Eillish")
+				Text(musicPlayer.currentPlayingSong.artistName)
 					.font(.system(size: 16, weight: .regular))
 					.frame(width: 300, height: 30, alignment: .leading)
 			}
@@ -39,7 +39,51 @@ struct PlayerView: View {
 			Text("PLEASE INSERT A PROGRESS BAR HERE")
 			
 			
-			
+			HStack(alignment: .center, spacing: 35) {
+				Button(action: {
+					// TODO: Add Like/Dislike Button functions
+				}, label: {
+					Image(systemName: "heart.fill")
+						.tint(Color(hex: "\(MusicFitColors.green)"))
+				})
+				
+				Button(action: {
+					// TODO: Add backward functions
+				}, label: {
+					Image(systemName: "backward.fill")
+						.tint(.white)
+				})
+				
+				Button(action: {
+					// TODO: Add pause/play button action
+				}, label: {
+					ZStack {
+						Circle()
+							.frame(width: 80, height: 80)
+							.tint(Color(hex: "\(MusicFitColors.green)"))
+							.shadow(radius: 10)
+						
+						Image(systemName: "backward.fill")
+							.foregroundColor(.white)
+							.font(.system(.title))
+					}
+				})
+				
+				Button(action: {
+					// TODO: Add forward functions
+				}, label: {
+					Image(systemName: "forward.fill")
+						.tint(.white)
+				})
+				
+				Button(action: {
+					// TODO: Add more functions
+				}, label: {
+					Image(systemName: "ellipsis")
+						.tint(Color(hex: "\(MusicFitColors.gray)"))
+				})
+				
+			}
 			
 			
 			

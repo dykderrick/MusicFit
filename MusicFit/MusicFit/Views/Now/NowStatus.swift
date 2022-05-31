@@ -39,7 +39,7 @@ struct NowStatus: View {
 					.font(.system(size: 20, weight: .semibold))
 					.foregroundColor(Color.black)
 					.frame(width: UIScreen.main.bounds.width - 120, height: UIScreen.main.bounds.height / 13)
-					.background(Color(hex: "#25E495"))
+					.background(Color(hex: "\(MusicFitColors.green)"))
 					.clipShape(Capsule())
 			}
 			.frame(width: UIScreen.main.bounds.width - 120, height: UIScreen.main.bounds.height / 13)
