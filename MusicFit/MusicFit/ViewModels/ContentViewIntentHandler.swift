@@ -25,7 +25,7 @@ class ContentViewIntentHandler {
 			self.musicFitPlaylistManager.checkMusicFitPlaylistAvailability(musicFitStatus: musicFitStatus) { isAvailable in
 				if !isAvailable {
 					self.musicFitPlaylistManager.setMusicFitPlaylistId(musicFitStatus: musicFitStatus, playlistId: "")
-					print("PREPARE TO SET \(musicFitStatus) TO NIL: \(self.musicFitPlaylistManager.getMusicFitPlaylistId(musicFitStatus: musicFitStatus))")
+					print("PREPARE TO SET \(musicFitStatus) TO NIL: \(self.musicFitPlaylistManager.getMusicFitPlaylistId(ofStatus: musicFitStatus))")
 				}
 			}
 		}

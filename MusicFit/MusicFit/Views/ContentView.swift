@@ -23,7 +23,11 @@ struct ContentView: View {
 	
     var body: some View {
 		TabView(selection: $selection) {
-			NowView(workoutManager: workoutManager, musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler)
+			NowView(
+				workoutManager: workoutManager,
+				musicPlayer: musicPlayer,
+				miniPlayerIntentHandler: miniPlayerIntentHandler
+			)
 				.tag(0)
 				.tabItem {
 					VStack {
@@ -96,7 +100,7 @@ struct ContentView: View {
 						}
 						 */
 						
-						print("RESTING TEST: \(musicFitPlaylistManager.getMusicFitPlaylistId(musicFitStatus: .Resting))")
+						print("RESTING TEST: \(musicFitPlaylistManager.getMusicFitPlaylistId(ofStatus: .Resting))")
 						
                         
                         musicManager.getAllLibraryPlaylists(userToken) { playlists in

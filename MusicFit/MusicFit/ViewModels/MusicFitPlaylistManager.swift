@@ -28,7 +28,7 @@ class MusicFitPlaylistManager: ObservableObject {
 	///	  - musicFitStatus: a ``MusicFitStatus`` enumeration.
 	/// - Returns: a tuple of (Bool, String) representing getter result.
 	/// Bool value indicates if the playlist is found or not. String value indicates the found playlist id. If the Bool value is false, the String value will be "".
-	func getMusicFitPlaylistId(musicFitStatus: MusicFitStatus) -> (isFound: Bool, playlistId: String) {
+	func getMusicFitPlaylistId(ofStatus musicFitStatus: MusicFitStatus) -> (isFound: Bool, playlistId: String) {
 		let json = self.fileHandler.getJSONDataFromFile(fileName: "MusicFitPlaylists.json")
 			
 		if let json = json {
@@ -57,7 +57,7 @@ class MusicFitPlaylistManager: ObservableObject {
 		var isFound = false
 		
 		MusicFitStatus.allCases.forEach {
-			isFound = isFound || getMusicFitPlaylistId(musicFitStatus: $0).isFound
+			isFound = isFound || getMusicFitPlaylistId(ofStatus: $0).isFound
 		}
 		
 		return !isFound
@@ -75,7 +75,7 @@ class MusicFitPlaylistManager: ObservableObject {
 					// TODO: Handle Running Playlist
 					print(runningPlaylist)
 					self.setMusicFitPlaylistId(musicFitStatus: .Running, playlistId: runningPlaylist.id)
-					print("RUNNING PLAYLIST ID: \(self.getMusicFitPlaylistId(musicFitStatus: .Running))")
+					print("RUNNING PLAYLIST ID: \(self.getMusicFitPlaylistId(ofStatus: .Running))")
 				}
 				
 				// TODO: Change song catelog ids.
@@ -83,7 +83,7 @@ class MusicFitPlaylistManager: ObservableObject {
 					//TODO: Handle Walking Playlist
 					print(walkingPlaylist)
 					self.setMusicFitPlaylistId(musicFitStatus: .Walking, playlistId: walkingPlaylist.id)
-					print("WALKING PLAYLIST ID: \(self.getMusicFitPlaylistId(musicFitStatus: .Walking))")
+					print("WALKING PLAYLIST ID: \(self.getMusicFitPlaylistId(ofStatus: .Walking))")
 				}
 				
 				// TODO: Change song catelog ids.
@@ -91,7 +91,7 @@ class MusicFitPlaylistManager: ObservableObject {
 					//TODO: Handle Resting Playlist
 					print(restingPlaylist)
 					self.setMusicFitPlaylistId(musicFitStatus: .Resting, playlistId: restingPlaylist.id)
-					print("RESTING PLAYLIST ID: \(self.getMusicFitPlaylistId(musicFitStatus: .Resting))")
+					print("RESTING PLAYLIST ID: \(self.getMusicFitPlaylistId(ofStatus: .Resting))")
 				}
 				
 				completion(true)
@@ -100,7 +100,7 @@ class MusicFitPlaylistManager: ObservableObject {
 	}
 	
 	func checkMusicFitPlaylistAvailability(musicFitStatus: MusicFitStatus, completion: @escaping(Bool) -> Void) {
-		let playlistFoundResult = self.getMusicFitPlaylistId(musicFitStatus: musicFitStatus)
+		let playlistFoundResult = self.getMusicFitPlaylistId(ofStatus: musicFitStatus)
 		
 		if playlistFoundResult.isFound {
 			self.musicManager.getUserToken { userToken in
@@ -114,7 +114,7 @@ class MusicFitPlaylistManager: ObservableObject {
 	}
 	
 	func prepareMusicFitPlaylistTracks(musicFitStatus: MusicFitStatus, completion: @escaping((isPrepared: Bool, playlistTracks: PlaylistTracks)) -> Void) {
-		let musicFitPlaylistIdGetResult = self.getMusicFitPlaylistId(musicFitStatus: musicFitStatus)
+		let musicFitPlaylistIdGetResult = self.getMusicFitPlaylistId(ofStatus: musicFitStatus)
 		
 		if !musicFitPlaylistIdGetResult.isFound {
 			completion((false, PlaylistTracks(playlistId: "", tracks: [Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""], durationInMillis: 194088)])))
