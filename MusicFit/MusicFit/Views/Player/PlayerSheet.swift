@@ -6,13 +6,20 @@
 //
 
 import SwiftUI
+import MediaPlayer
 import SDWebImageSwiftUI
 
 struct PlayerSheet: View {
 	@ObservedObject var musicPlayer: MusicPlayer
 	
+	@State var pauseResumeButtonImageSystemName = "play.fill"
+	@State var progressAmount = 0.0
+	
+	let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+	
     var body: some View {
 		VStack {
+			// MARK: - Song Artwork Image
 			WebImage(
 				url: URL(
 					string: musicPlayer.currentPlayingSong.artworkURL
@@ -26,6 +33,7 @@ struct PlayerSheet: View {
 			.shadow(radius: 10)
 			.padding()
 			
+			// MARK: - Song name and artist
 			VStack(alignment: .leading, spacing: 5) {
 				Text(musicPlayer.currentPlayingSong.name)
 					.font(.system(size: 23, weight: .semibold))
@@ -36,24 +44,33 @@ struct PlayerSheet: View {
 					.frame(width: 300, height: 30, alignment: .leading)
 			}
 			
-			ProgressView(value: 50, total: 100)
+			// MARK: - Progress Bar
+			ProgressView(
+				value: progressAmount,
+				total: Double(musicPlayer.currentPlayingSong.durationInMillis)
+			)
 				.frame(width: UIScreen.main.bounds.width - 50, height: 30)
 				.tint(Color(hex: "\(MusicFitColors.green)"))
+				.onReceive(timer) { _ in
+					progressAmount = musicPlayer.player.currentPlaybackTime * 1000
+				}
 			
+			// MARK: - Song Playback Time
 			HStack(alignment: .center, spacing: UIScreen.main.bounds.width - 140) {
-				Text("01:24")
-				Text("04:23")
+				Text("01:24")  // TODO: Change it
+				Text("04:23")  // TODO: Change it
 			}
 			
-			
 			HStack(alignment: .center, spacing: 35) {
+				// MARK: - Like / Dislike Button
 				Button(action: {
 					// TODO: Add Like/Dislike Button functions
 				}, label: {
-					Image(systemName: "heart.fill")
+					Image(systemName: "heart.fill")  // TODO: Change it
 						.tint(Color(hex: "\(MusicFitColors.green)"))
 				})
 				
+				// MARK: - Revert to beginning / Last Song Button
 				Button(action: {
 					// TODO: Add backward functions
 				}, label: {
@@ -61,8 +78,13 @@ struct PlayerSheet: View {
 						.tint(.white)
 				})
 				
+				// MARK: - Pause / Play Button
 				Button(action: {
-					// TODO: Add pause/play button action
+					if MPMusicPlayerController.applicationQueuePlayer.playbackState == .playing {
+						musicPlayer.playerPause()
+					} else {
+						musicPlayer.playerPlay()
+					}
 				}, label: {
 					ZStack {
 						Circle()
@@ -70,21 +92,31 @@ struct PlayerSheet: View {
 							.tint(Color(hex: "\(MusicFitColors.green)"))
 							.shadow(radius: 10)
 						
-						Image(systemName: "pause.fill")
+						Image(systemName: MPMusicPlayerController.applicationQueuePlayer.playbackState == .playing ? "pause.fill" : "play.fill")
 							.foregroundColor(.white)
 							.font(.system(.title))
+							.onReceive(NotificationCenter.default.publisher(for: .MPMusicPlayerControllerPlaybackStateDidChange)) { _ in
+								// FIXME: This is a bug right now. The button cannot be updated. You know the reason.
+								if MPMusicPlayerController.applicationQueuePlayer.playbackState == .playing {
+									pauseResumeButtonImageSystemName = "pause.fill"
+								} else {
+									pauseResumeButtonImageSystemName = "play.fill"
+								}
+							}
 					}
 				})
 				
+				// MARK: - Skip to Next Song Button
 				Button(action: {
-					// TODO: Add forward functions
+					// TODO: Add action
 				}, label: {
 					Image(systemName: "forward.fill")
 						.tint(.white)
 				})
 				
+				// MARK: - More Functions Button
 				Button(action: {
-					// TODO: Add more functions
+					// TODO: Add action
 				}, label: {
 					Image(systemName: "ellipsis")
 						.tint(Color(hex: "\(MusicFitColors.gray)"))
