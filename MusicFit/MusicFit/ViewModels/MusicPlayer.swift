@@ -11,7 +11,7 @@ import StoreKit
 
 class MusicPlayer: ObservableObject {
 	// MARK: - Published variables
-	@Published var currentPlayingSong = Song(id: "", name: "Unknown", artistName: "Unknown Artist", artworkURL: "", genreNames: [""], durationInMillis: 194088)
+	@Published var currentPlayingSong = Song(id: "myID", name: "Unknown", artistName: "Unknown Artist", artworkURL: "", genreNames: [""], durationInMillis: 194088)
 	@Published var player = MPMusicPlayerController.applicationQueuePlayer  // Use MusicFit Player
 	@Published var isPlaying = false
 	@Published var upNextSongsQueue: [Song] = []  // TODO: Is this a good design?
