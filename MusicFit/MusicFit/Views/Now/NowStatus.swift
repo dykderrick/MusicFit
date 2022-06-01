@@ -11,6 +11,8 @@ struct NowStatus: View {
 	@ObservedObject var workoutManager: WorkoutManager
 	@ObservedObject var musicPlayer: MusicPlayer
 	
+
+	
     var body: some View {
 		VStack(alignment: .leading, spacing: 40) {
 			HStack(alignment: .center, spacing: 100) {
@@ -24,9 +26,7 @@ struct NowStatus: View {
 						Text(workoutManager.predictedStatus.rawValue.uppercased())
 							.foregroundColor(.white)
 							.font(.system(size: 19, weight: .semibold))
-						Image(systemName: "figure.stand")
-						// TODO: "figure.walk" for walking
-						// TODO: "hare.fill" for running
+						Image(systemName: workoutManager.predictedStatusImageSystemName ?? "xmark.octagon")
 					}
 				}
 				
@@ -36,7 +36,10 @@ struct NowStatus: View {
 			}
 			
 			// MARK: - Start Workout Button
+			
 			// TODO: Handle Button Disable Function
+			
+			// FIXME: Can we make the button action asynchronous?
 			Button(action: {
 				// When click this button, workout will be started,
 				// and "Resting" playlist will be added to queue.

@@ -6,13 +6,17 @@
 //
 
 import SwiftUI
+import MediaPlayer
 
 struct MiniPlayer: View {
 	@ObservedObject var musicPlayer: MusicPlayer
 	@ObservedObject var miniPlayerIntentHandler: MiniPlayerIntentHandler
 	
+	@State var pauseResumeButtonImageSystemName = "play.fill"
+	
     var body: some View {
 		HStack (spacing: 50) {
+			// MARK: - Open Player Sheet Button
 			Button(action: {
 				miniPlayerIntentHandler.showPlayerSheet()
 			}, label: {
@@ -28,19 +32,34 @@ struct MiniPlayer: View {
 			})
 			
 
-			
-			Button(action: {  // Pause / Resume Button
-				
+			// MARK: - Pause / Resume Button
+			Button(action: {
+				if MPMusicPlayerController.applicationQueuePlayer.playbackState == .playing {
+					musicPlayer.playerPause()
+				} else {
+					musicPlayer.playerPlay()
+				}
 			}) {
-				Image(systemName: "play.fill")
+				Image(systemName: pauseResumeButtonImageSystemName)
 					.foregroundColor(Color(hex: "\(MusicFitColors.gray)"))
+					.onReceive(NotificationCenter.default.publisher(for: .MPMusicPlayerControllerPlaybackStateDidChange)) { _ in
+						if MPMusicPlayerController.applicationQueuePlayer.playbackState == .playing {
+							pauseResumeButtonImageSystemName = "pause.fill"
+						} else {
+							pauseResumeButtonImageSystemName = "play.fill"
+						}
+					}
 			}
-			Button(action: {  // Next Song Button
-				
+			
+			// MARK: - Skip to Next Song Button
+			Button(action: {
+				// TODO: Add logic here
 			}) {
 				Image(systemName: "forward.fill")
 					.foregroundColor(Color(hex: "#7B7B7B"))
 			}
+			
+			// MARK: -
 		}
 		.frame(height: 54.0)
 		.frame(minWidth: 300, maxWidth: .infinity)

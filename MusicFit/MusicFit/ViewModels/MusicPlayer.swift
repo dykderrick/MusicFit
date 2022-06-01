@@ -27,6 +27,9 @@ class MusicPlayer: ObservableObject {
 		self.musicManager = musicManager
 		self.playlistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
 		
+		// Preparing the player at the initialization stage can reduce latency
+		self.player.prepareToPlay()
+		
 		initUpNextSongsQueue()
 	}
 	
@@ -121,10 +124,24 @@ class MusicPlayer: ObservableObject {
 	
 	// MARK: - Intents
 	func playerPlay() {
+		// Play the player.
 		player.play()
+		
+		// Set currentPlaylingSong variable
+		self.musicManager.getUserToken { userToken in
+			self.musicManager.fetchStorefrontID(userToken: userToken) { storefrontId in
+				self.musicManager.getCatelogSong(
+					userToken,
+					storefrontId: storefrontId,
+					catelogSongId: self.player.nowPlayingItem?.playbackStoreID ?? "") { song in
+						self.currentPlayingSong = song
+					}
+			}
+		}
 	}
 	
 	func playerPause() {
+		// Pause the player.
 		player.pause()
 	}
 	

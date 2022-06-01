@@ -16,4 +16,8 @@ class MiniPlayerIntentHandler: ObservableObject {
 		self.showingPlayerSheet = true
 	}
 	
+	func playPauseButtonClicked() {
+		
+	}
+	
 }

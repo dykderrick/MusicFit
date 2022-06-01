@@ -71,6 +71,48 @@ class AppleMusicManager: ObservableObject {
 
 // MARK: - Song
 extension AppleMusicManager {
+	// See Also: https://developer.apple.com/documentation/applemusicapi/get_a_catalog_song
+	// TODO: Add formal documentation to this function
+	func getCatelogSong(_ userToken: String, storefrontId: String, catelogSongId: String, completion: @escaping(Song) -> Void) {
+		let musicRequest = wrapMusicRequest(
+			urlSting: "\(apiRootPath)/catalog/\(storefrontId)/songs/\(catelogSongId)",
+			userToken: userToken,
+			httpMethod: "GET",
+			parameters: nil
+		)
+		
+		musicRequest.validate().responseDecodable(of: JSON.self) { response in
+			switch response.result {
+			case .success(let value):
+				let result = (JSON(value)["data"]).array![0]
+				let attributes = result["attributes"]
+				
+				// FIXME: This snippet is way too ugly.
+				// FIXME: This snippet is redundant.
+				let genreNamesArray = (attributes["genreNames"]).array!
+				var genreNames = [String]()
+				for genreName in genreNamesArray {
+					genreNames.append(genreName.stringValue)
+				}
+				
+				completion(
+					Song(
+						id: 			  result["id"].stringValue,
+						name: 			  attributes["name"].stringValue,
+						artistName: 	  attributes["artistName"].stringValue,
+						artworkURL: 	  attributes["artwork"]["url"].stringValue,
+						genreNames: 	  genreNames,
+						durationInMillis: attributes["durationInMillis"].intValue
+					)
+				)
+				
+			case .failure(let error):
+				print(error)
+			}
+		}.resume()
+	}
+	
+	
 	// See Also: https://developer.apple.com/documentation/applemusicapi/get_a_personal_song_rating
 	// TODO: Add formal documentation to this function
 	func getSongRating(_ userToken: String, id songIdentifier: String, completion: @escaping(Song.Rating) -> Void) {

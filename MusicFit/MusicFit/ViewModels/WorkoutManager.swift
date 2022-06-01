@@ -9,9 +9,18 @@ import Foundation
 import CoreMotion
 import CoreML
 
+struct WorkoutManagerConstants {
+	static let statusImageSystemNames: [MusicFitStatus: String] = [
+		.Resting: "figure.stand",
+		.Walking: "figure.walk",
+		.Running: "hare.fill"
+	]
+}
+
 class WorkoutManager: ObservableObject {
 	// MARK: - Variable Initiaions
 	@Published var predictedStatus = MusicFitStatus.Resting
+	@Published var predictedStatusImageSystemName = WorkoutManagerConstants.statusImageSystemNames[MusicFitStatus.Resting]
 	@Published var workoutStarted = false
 	
 	let motionManager = CMMotionManager()  // To handle accelerometers
@@ -49,6 +58,9 @@ class WorkoutManager: ObservableObject {
 				default:
 					print("Not Predictable")
 				}
+				
+				// Set predicted status image system name
+				self.predictedStatusImageSystemName = WorkoutManagerConstants.statusImageSystemNames[self.predictedStatus]
 
 				// Start a new prediction window
 				currentIndexInPredictionWindow = 0
