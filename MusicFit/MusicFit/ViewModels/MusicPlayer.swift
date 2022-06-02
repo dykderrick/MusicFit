@@ -123,6 +123,39 @@ class MusicPlayer: ObservableObject {
 	
 	
 	// MARK: - Intents
+	
+	// Will be triggered when MPMusicPlayerControllerQueueDidChange
+	// TODO: Add formal documentation to this function.
+	func updateCurrentPlayingSong() {
+		guard let nowPlaylingItem = self.player.nowPlayingItem else { return }
+		
+		self.musicManager.getUserToken { userToken in
+			self.musicManager.fetchStorefrontID(userToken: userToken) { storefrontID in
+				self.musicManager.getCatelogSong(userToken, storefrontId: storefrontID, catelogSongId: nowPlaylingItem.playbackStoreID) { song in
+					self.currentPlayingSong = song
+				}
+			}
+		}
+	}
+	
+	func updateUpNextSongsQueue() {
+		self.player.perform(queueTransaction: { _ in }, completionHandler: { (queue, error) in
+			print("QUEUE ITEM COUNT: \(queue.items.count)")
+			
+			self.upNextSongsQueue.removeAll()
+			
+			for i in 1 ... queue.items.count - 1 {
+				self.musicManager.getUserToken { userToken in
+					self.musicManager.fetchStorefrontID(userToken: userToken) { storefrontID in
+						self.musicManager.getCatelogSong(userToken, storefrontId: storefrontID, catelogSongId: queue.items[i].playbackStoreID) { song in
+							self.upNextSongsQueue += [song]
+						}
+					}
+				}
+			}
+		})
+	}
+	
 	func playerPlay() {
 		// Play the player.
 		player.play()
