@@ -9,11 +9,12 @@ import SwiftUI
 
 struct UpNextsList: View {
 	@ObservedObject var musicPlayer: MusicPlayer
+	@ObservedObject var workoutManager: WorkoutManager
 	
     var body: some View {
 		List {
 			HStack(alignment: .center, spacing: 50) {
-				Text("Up Next Songs in Running")
+				Text("Up Next Songs in \(workoutManager.predictedStatus.rawValue)")
 					.foregroundColor(.white)
 					.font(.system(size: 19, weight: .semibold))
 				
@@ -37,12 +38,13 @@ struct UpNextsList_Previews: PreviewProvider {
 		let fileHandler = FileHandler()
 		let musicManager = AppleMusicManager()
 		let musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
+		let workoutManager = WorkoutManager(musicPlayer: musicPlayer)
 		
-		UpNextsList(musicPlayer: musicPlayer)
+		UpNextsList(musicPlayer: musicPlayer, workoutManager: workoutManager)
 			.preferredColorScheme(.dark)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro Max"))
 		
-		UpNextsList(musicPlayer: musicPlayer)
+		UpNextsList(musicPlayer: musicPlayer, workoutManager: workoutManager)
 			.preferredColorScheme(.light)
 			.previewDevice(PreviewDevice(rawValue: "iPhone 12 Pro"))
     }

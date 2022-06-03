@@ -24,7 +24,7 @@ struct NowView: View {
 			
 			NowStatus(workoutManager: workoutManager, musicPlayer: musicPlayer)
 			
-			UpNextsList(musicPlayer: musicPlayer)
+			UpNextsList(musicPlayer: musicPlayer, workoutManager: workoutManager)
 			
 			MiniPlayer(musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler)
 		}
@@ -37,11 +37,15 @@ struct NowView: View {
 
 struct NowView_Previews: PreviewProvider {
     static var previews: some View {
-		let workoutManager = WorkoutManager()
 		let fileHandler = FileHandler()
 		let musicManager = AppleMusicManager()
 		let miniPlayerIntentHandler = MiniPlayerIntentHandler()
-		let musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager, previewSong: PreviewStatics.previewSong)
+		let musicPlayer = MusicPlayer(
+			fileHandler: fileHandler,
+			musicManager: musicManager,
+			previewSong: PreviewStatics.previewSong
+		)
+		let workoutManager = WorkoutManager(musicPlayer: musicPlayer)
 		
 		NowView(workoutManager: workoutManager, musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler)
 			.preferredColorScheme(.dark)

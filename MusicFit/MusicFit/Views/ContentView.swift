@@ -140,12 +140,12 @@ struct ContentView_Previews: PreviewProvider {
 			musicFitPlaylistManager: musicFitPlaylistManager
 		)
 		let miniPlayerIntentHandler = MiniPlayerIntentHandler()
-		let workoutManager = WorkoutManager()
 		let musicPlayer = MusicPlayer(
 			fileHandler: fileHandler,
 			musicManager: musicManager,
 			previewSong: PreviewStatics.previewSong
 		)
+		let workoutManager = WorkoutManager(musicPlayer: musicPlayer)
 		
 		
 		ContentView(

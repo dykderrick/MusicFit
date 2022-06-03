@@ -16,8 +16,8 @@ struct NowStatus: View {
     var body: some View {
 		VStack(alignment: .leading, spacing: 40) {
 			HStack(alignment: .center, spacing: 100) {
+				// MARK: - MusicFit Predicted Current Status Area
 				VStack(alignment: .leading, spacing: 5) {
-					// MARK: - MusicFit Predicted Current Status Area
 					Text("Status:")
 						.foregroundColor(Color(hex: "#D1D1D1"))
 						.font(.system(size: 19, weight: .semibold))
@@ -80,7 +80,6 @@ struct NowStatus: View {
 
 struct NowStatus_Previews: PreviewProvider {
     static var previews: some View {
-		let workoutManager = WorkoutManager()
 		let musicManager = AppleMusicManager()
 		let fileHandler = FileHandler()
 		let musicPlayer = MusicPlayer(
@@ -88,6 +87,7 @@ struct NowStatus_Previews: PreviewProvider {
 			musicManager: musicManager,
 			previewSong: PreviewStatics.previewSong
 		)
+		let workoutManager = WorkoutManager(musicPlayer: musicPlayer)
 		
 		NowStatus(workoutManager: workoutManager, musicPlayer: musicPlayer)
 			.preferredColorScheme(.dark)

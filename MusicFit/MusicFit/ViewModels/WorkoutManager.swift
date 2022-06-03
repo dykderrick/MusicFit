@@ -23,14 +23,23 @@ class WorkoutManager: ObservableObject {
 	@Published var predictedStatusImageSystemName = WorkoutManagerConstants.statusImageSystemNames[MusicFitStatus.Resting]
 	@Published var workoutStarted = false
 	
-	let motionManager = CMMotionManager()  // To handle accelerometers
-	let activityClassifier = ActivityClassifier()  // TODO: Handle warnings here.
+	
+	let musicPlayer: MusicPlayer
+	let motionManager: CMMotionManager  // To handle accelerometers
+	let activityClassifier: ActivityClassifier
 	
 	var currentIndexInPredictionWindow = 0
 	let accelDataX = try! MLMultiArray(shape: [ModelConstants.predictionWindowSize] as [NSNumber], dataType: MLMultiArrayDataType.double)
 	let accelDataY = try! MLMultiArray(shape: [ModelConstants.predictionWindowSize] as [NSNumber], dataType: MLMultiArrayDataType.double)
 	let accelDataZ = try! MLMultiArray(shape: [ModelConstants.predictionWindowSize] as [NSNumber], dataType: MLMultiArrayDataType.double)
 	var stateOutput = try! MLMultiArray(shape:[ModelConstants.stateInLength as NSNumber], dataType: MLMultiArrayDataType.double)
+	
+	// MARK: - Initiators
+	init(musicPlayer: MusicPlayer) {
+		self.musicPlayer = musicPlayer
+		self.motionManager = CMMotionManager()
+		self.activityClassifier = ActivityClassifier()  // TODO: Handle warnings here.
+	}
 	
 	// MARK: - Functions
 	func addAccelSampleToDataArray (accelSample: CMAccelerometerData) {
@@ -50,10 +59,19 @@ class WorkoutManager: ObservableObject {
 				// Use the predicted activity here
 				switch predictedActivity {
 				case "Resting":
+					if self.predictedStatus != .Resting {
+						self.musicPlayer.modifyUpNextSongsQueueByStatus(.Resting)
+					}
 					self.predictedStatus = .Resting
 				case "Running":
+					if self.predictedStatus != .Running {
+						self.musicPlayer.modifyUpNextSongsQueueByStatus(.Running)
+					}
 					self.predictedStatus = .Running
 				case "Walking":
+					if self.predictedStatus != .Walking {
+						self.musicPlayer.modifyUpNextSongsQueueByStatus(.Walking)
+					}
 					self.predictedStatus = .Walking
 				default:
 					print("Not Predictable")

@@ -23,8 +23,8 @@ struct MusicFitApp: App {
 		musicFitPlaylistManager = MusicFitPlaylistManager(musicManager: musicManager, fileHandler: fileHandler)
 		contentViewIntentHandler = ContentViewIntentHandler(musicFitPlaylistManager: musicFitPlaylistManager)
 		miniPlayerIntentHandler = MiniPlayerIntentHandler()
-		workoutManager = WorkoutManager()
 		musicPlayer = MusicPlayer(fileHandler: fileHandler, musicManager: musicManager)
+		workoutManager = WorkoutManager(musicPlayer: musicPlayer)
 	}
 	
     var body: some Scene {
