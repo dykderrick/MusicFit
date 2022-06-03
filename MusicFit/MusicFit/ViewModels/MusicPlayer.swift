@@ -9,6 +9,16 @@ import Foundation
 import MediaPlayer
 import StoreKit
 
+struct MusicPlayerConstants {
+	let timeIntervalFormatter: DateComponentsFormatter
+	
+	init() {
+		timeIntervalFormatter = DateComponentsFormatter()
+		timeIntervalFormatter.allowedUnits = [.minute, .second]
+		timeIntervalFormatter.zeroFormattingBehavior = .pad
+	}
+}
+
 class MusicPlayer: ObservableObject {
 	// MARK: - Published variables
 	@Published var currentPlayingSong = Song(id: "myID", name: "Unknown", artistName: "Unknown Artist", artworkURL: "", genreNames: [""], durationInMillis: 194088)

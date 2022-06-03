@@ -34,7 +34,8 @@ struct UpNextSong: View {
 					.font(.system(size: 11, weight: .regular))
 				
 				// FIXME: Song Duration isn't Correct
-				Text("\(String(Int(song.durationInMillis / 60000))):\(String(Int(song.durationInMillis / 60000 % 1 * 60)))")  // TODO: Way too ugly here.
+				Text(MusicPlayerConstants().timeIntervalFormatter.string(
+					from: TimeInterval(self.song.durationInMillis / 1000)) ?? "00:00")
 					.foregroundColor(Color(hex: "#848484"))
 					.font(.system(size: 11, weight: .regular))
 			}
@@ -50,7 +51,7 @@ struct UpNextSong: View {
 
 struct UpNextSong_Previews: PreviewProvider {
     static var previews: some View {
-		let song = Song(id: "", name: "Unknown", artistName: "Unknown Artist", artworkURL: "", genreNames: [""], durationInMillis: 194088)
+		let song = PreviewStatics.previewSong
 		
 		UpNextSong(song: song)
 			.preferredColorScheme(.dark)

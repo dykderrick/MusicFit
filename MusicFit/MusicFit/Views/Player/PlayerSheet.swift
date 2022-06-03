@@ -57,8 +57,12 @@ struct PlayerSheet: View {
 			
 			// MARK: - Song Playback Time
 			HStack(alignment: .center, spacing: UIScreen.main.bounds.width - 140) {
-				Text("01:24")  // TODO: Change it
-				Text("04:23")  // TODO: Change it
+				Text(MusicPlayerConstants().timeIntervalFormatter.string(
+					from: TimeInterval(progressAmount / 1000)) ?? "00:00"
+				)
+				Text(MusicPlayerConstants().timeIntervalFormatter.string(
+					from: TimeInterval(self.musicPlayer.currentPlayingSong.durationInMillis / 1000)) ?? "00:00"
+				)
 			}
 			
 			HStack(alignment: .center, spacing: 35) {
