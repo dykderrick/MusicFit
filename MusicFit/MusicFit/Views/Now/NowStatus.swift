@@ -35,22 +35,25 @@ struct NowStatus: View {
 					.underline()
 			}
 			
-			// MARK: - Start Workout Button
-			
-			// TODO: Handle Button Disable Function
-			
+			// MARK: - Start / End Workout Button
+
 			// FIXME: Can we make the button action asynchronous?
 			Button(action: {
-				// When click this button, workout will be started,
-				// and "Resting" playlist will be added to queue.
+				// When click this button, workout will be started and the button will be toggled to "End Workout";
+				// "Resting" playlist will be added to queue.
 				
-				// Handle workout start intent
-				workoutManager.startWorkout()
-				
-				// Make the Player play
-				musicPlayer.playerPlay()
+				if !workoutManager.workoutStarted {
+					// Handle workout start intent
+					workoutManager.startWorkout()
+					
+					// Make the Player play
+					musicPlayer.playerPlay()
+				} else {
+					// Handle workout end intent
+					workoutManager.endWorkout()
+				}
 			}) {
-				Text("Start Workout")
+				Text(workoutManager.workoutStarted ? "End Workout" : "Start Workout")
 					.font(.system(size: 20, weight: .semibold))
 					.foregroundColor(Color.black)
 					.frame(
