@@ -54,6 +54,7 @@ struct MiniPlayer: View {
 			// MARK: - Skip to Next Song Button
 			Button(action: {
 				// TODO: Add logic here
+				musicPlayer.playerSkipToNextItem()
 			}) {
 				Image(systemName: "forward.fill")
 					.foregroundColor(Color(hex: "#7B7B7B"))

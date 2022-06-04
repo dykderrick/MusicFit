@@ -11,6 +11,8 @@ struct UpNextsList: View {
 	@ObservedObject var musicPlayer: MusicPlayer
 	@ObservedObject var workoutManager: WorkoutManager
 	
+	@State var songsQueue: [Song] = []
+	
     var body: some View {
 		List {
 			HStack(alignment: .center, spacing: 50) {
@@ -26,9 +28,14 @@ struct UpNextsList: View {
 				.tint(Color(hex: "\(MusicFitColors.gray)"))
 			}
 			
-			ForEach(musicPlayer.upNextSongsQueue) { song in
-				UpNextSong(song: song)
+			ForEach(musicPlayer.upNextSongsQueue[musicPlayer.player.indexOfNowPlayingItem ... musicPlayer.upNextSongsQueue.count - 1]) { song in
+				if song.id != "myID" {  // Avoid showing empty song
+					UpNextSong(song: song)
+				}
 			}
+		}
+		.onAppear() {
+			print(musicPlayer.upNextSongsQueue.count)
 		}
     }
 }

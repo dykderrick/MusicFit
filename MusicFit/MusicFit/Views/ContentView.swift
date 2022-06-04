@@ -121,9 +121,10 @@ struct ContentView: View {
 		}
 		// When music player now playing item changes (probably changes to another song),
 		// update the currentPlayingSong and upNextSongsQueue, the two observed variables in MusicPlayer.
-		.onReceive(NotificationCenter.default.publisher(for: .MPMusicPlayerControllerNowPlayingItemDidChange)) { _ in
+		.onReceive(NotificationCenter.default.publisher(
+			for: .MPMusicPlayerControllerNowPlayingItemDidChange)
+		) { _ in
 			musicPlayer.updateCurrentPlayingSong()
-			musicPlayer.updateUpNextSongsQueue()
 		}
     }
 }

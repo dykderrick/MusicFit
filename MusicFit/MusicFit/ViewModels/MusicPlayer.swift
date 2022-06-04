@@ -24,7 +24,7 @@ class MusicPlayer: ObservableObject {
 	@Published var currentPlayingSong = Song(id: "myID", name: "Unknown", artistName: "Unknown Artist", artworkURL: "", genreNames: [""], durationInMillis: 194088)
 	@Published var player = MPMusicPlayerController.applicationQueuePlayer  // Use MusicFit Player
 	@Published var isPlaying = false
-	@Published var upNextSongsQueue: [Song] = []  // TODO: Is this a good design?
+	@Published var upNextSongsQueue = [Song(id: "myID", name: "Unknown", artistName: "Unknown Artist", artworkURL: "", genreNames: [""], durationInMillis: 194088)]  // TODO: Is this a good design?
 	
 	// MARK: - ViewModel variables
 	let fileHandler: FileHandler
@@ -95,7 +95,7 @@ class MusicPlayer: ObservableObject {
 		if upNextSongsQueue.count == 0 {
 			initUpNextSongsQueue()  // FIXME: Maybe there will be bugs.
 		} else {
-			upNextSongsQueue.removeAll()
+			upNextSongsQueue = [Song(id: "myID", name: "Unknown", artistName: "Unknown Artist", artworkURL: "", genreNames: [""], durationInMillis: 194088)]
 			
 			self.musicManager.getUserToken() { userToken in
 				let musicFitPlaylistIdFoundResult = self.playlistManager.getMusicFitPlaylistId(ofStatus: musicFitStatus)
@@ -106,7 +106,7 @@ class MusicPlayer: ObservableObject {
 						userToken,
 						libraryPlaylistId: musicFitPlaylistIdFoundResult.playlistId
 					) { playlistTracks in
-						self.upNextSongsQueue += playlistTracks.tracks  // Append tracks to up next songs queue
+						self.upNextSongsQueue = playlistTracks.tracks  // Append tracks to up next songs queue
 						
 						self.player.perform(queueTransaction: { queue in
 							let afterItem = queue.items[0]  // current playing song
@@ -148,24 +148,6 @@ class MusicPlayer: ObservableObject {
 		}
 	}
 	
-	func updateUpNextSongsQueue() {
-		self.player.perform(queueTransaction: { _ in }, completionHandler: { (queue, error) in
-			print("QUEUE ITEM COUNT: \(queue.items.count)")
-			
-			self.upNextSongsQueue.removeAll()
-			
-			for i in 1 ... queue.items.count - 1 {
-				self.musicManager.getUserToken { userToken in
-					self.musicManager.fetchStorefrontID(userToken: userToken) { storefrontID in
-						self.musicManager.getCatelogSong(userToken, storefrontId: storefrontID, catelogSongId: queue.items[i].playbackStoreID) { song in
-							self.upNextSongsQueue += [song]
-						}
-					}
-				}
-			}
-		})
-	}
-	
 	func playerPlay() {
 		// Play the player.
 		player.play()
@@ -188,4 +170,7 @@ class MusicPlayer: ObservableObject {
 		player.pause()
 	}
 	
+	func playerSkipToNextItem() {
+		player.skipToNextItem()
+	}
 }
