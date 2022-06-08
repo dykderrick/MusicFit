@@ -8,7 +8,7 @@
 import Foundation
 
 struct ModelConstants {
-	static let predictionWindowSize = 50
+	static let predictionWindowSize = 100
 	static let sensorsUpdateInterval = 1.0 / 50.0
 	static let stateInLength = 400
 }
