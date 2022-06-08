@@ -4,5 +4,7 @@
 # For Xcode user settings
 MusicFit/MusicFit.xcodeproj/xcuserdata/*
 
+MusicFit/MusicFit.xcodeproj/project.xcworkspace/xcuserdata/*
+
 # py scripts
 *.py
