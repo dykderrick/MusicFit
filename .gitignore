@@ -3,3 +3,6 @@
 
 # For Xcode user settings
 MusicFit/MusicFit.xcodeproj/xcuserdata/*
+
+# py scripts
+*.py
