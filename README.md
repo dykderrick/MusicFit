@@ -13,15 +13,15 @@ Basically, this app uses a SwiftUI MVVM architecture to separate models of playl
 
 ## User Evaluation
 ### Experimental group
-1、Stand still, the phone shows the rest state
-2、Start running, record the time needed to switch to running state T1 after starting to run
-3、Run for 1min, then stop and walk for 30s, record the time needed to switch to rest state T2
-4、then stop to rest, record the time required to switch to the rest state T3
-5、Record the number of times the user needs to unlock the phone screen n1 and the number of steps the user takes to operate the phone n2 (each tap on the screen is counted as one step) 🌟
+- Stand still, the phone shows the rest state
+- Start running, record the time needed to switch to running state T1 after starting to run
+- Run for 1min, then stop and walk for 30s, record the time needed to switch to rest state T2
+- then stop to rest, record the time required to switch to the rest state T3
+- Record the number of times the user needs to unlock the phone screen n1 and the number of steps the user takes to operate the phone n2 (each tap on the screen is counted as one step) 🌟
 
 ### Control group
-1、Stand Still, the phone shows rest state
-2、Switch the running song list, start running, record the time needed to switch the song list T1'
-3、Run for 1min, then stop walking and switch to the walking song list, record the time needed to switch to the walking song list T2'
-4、Stop and rest, record the time required to switch to the rest song list T3'
-5、Record the number of times the user needs to unlock the phone screen n1' and the number of steps the user takes to operate the phone n2' (each tap on the screen is counted as one step) 🌟
+- Stand Still, the phone shows rest state
+- Switch the running song list, start running, record the time needed to switch the song list T1'
+- Run for 1min, then stop walking and switch to the walking song list, record the time needed to switch to the walking song list T2'
+- Stop and rest, record the time required to switch to the rest song list T3'
+- Record the number of times the user needs to unlock the phone screen n1' and the number of steps the user takes to operate the phone n2' (each tap on the screen is counted as one step) 🌟
