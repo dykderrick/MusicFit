@@ -1,4 +1,6 @@
 # MusicFit
+This repo was once a class project but later we decided to move it on.
+
 ## Intro
 This app is a re-discovery of users' music listening experience and their physical behavioral changes when users are doing workouts. The app can let the user set up different playlists for three different statuses (running, walking, or just resting). Later when the user clicks the *Start Workout* button on the main page, the app can recognize (using a pre-trained machine learning model) one of three statuses and push different playlists for the user to listen to accordingly.
 
