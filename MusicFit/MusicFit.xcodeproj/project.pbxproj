@@ -206,13 +206,13 @@
 			path = Player;
 			sourceTree = "<group>";
 		};
-		8C5E764C2831380300DCC4BA /* Resources */ = {
+		8C5E764C2831380300DCC4BA /* Statics */ = {
 			isa = PBXGroup;
 			children = (
 				8C5E764B283137F800DCC4BA /* MusicFitPlaylists.json */,
 				8C81BED92833A09400DE7A54 /* README.md */,
 			);
-			path = Resources;
+			path = Statics;
 			sourceTree = "<group>";
 		};
 		8C6633152839DF7500B97276 /* Now */ = {
@@ -258,15 +258,15 @@
 		8CC73FD62826525700F61986 /* MusicFit */ = {
 			isa = PBXGroup;
 			children = (
-				353B2D7628444D0B00EDEF76 /* MLModels */,
+				8CC73FDB2826525800F61986 /* Assets.xcassets */,
 				8CC740142826689800F61986 /* MusicFit.entitlements */,
 				8CC73FD72826525700F61986 /* MusicFitApp.swift */,
-				8CC740172826690200F61986 /* Views */,
-				8CC73FDB2826525800F61986 /* Assets.xcassets */,
-				8CC73FDD2826525800F61986 /* Preview Content */,
+				353B2D7628444D0B00EDEF76 /* MLModels */,
 				8CC7401B282669F400F61986 /* Models */,
+				8CC740172826690200F61986 /* Views */,
 				8CC7401F28266AB000F61986 /* ViewModels */,
-				8C5E764C2831380300DCC4BA /* Resources */,
+				8CC73FDD2826525800F61986 /* Preview Content */,
+				8C5E764C2831380300DCC4BA /* Statics */,
 			);
 			path = MusicFit;
 			sourceTree = "<group>";
@@ -814,29 +814,32 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MusicFit/Preview Content\"";
-				DEVELOPMENT_TEAM = G82CLNVA64;
+				DEVELOPMENT_TEAM = C769U5XA22;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "MusicFit will require you to give access on Apple Music for better experience.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in MusicFit.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by MusicFit will be saved to HealthKit.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.yingke.MusicFit;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.yingke.fooo.musicfit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -849,29 +852,32 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"MusicFit/Preview Content\"";
-				DEVELOPMENT_TEAM = G82CLNVA64;
+				DEVELOPMENT_TEAM = C769U5XA22;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSAppleMusicUsageDescription = "MusicFit will require you to give access on Apple Music for better experience.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Your workout related data will be used to display your saved workouts in MusicFit.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Workouts tracked by MusicFit will be saved to HealthKit.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.yingke.MusicFit;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.yingke.fooo.musicfit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
