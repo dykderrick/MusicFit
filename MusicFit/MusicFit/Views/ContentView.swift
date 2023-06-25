@@ -41,18 +41,14 @@ struct ContentView: View {
     
     var body: some View {
         TabView(selection: $selection) {
-            NowView(
-                workoutManager: workoutManager,
-                musicPlayer: musicPlayer,
-                miniPlayerIntentHandler: miniPlayerIntentHandler
-            )
-            .tag(0)
-            .tabItem {
-                VStack {
-                    Image(systemName: "music.note")
-                    Text("Now")
+            NowView(workoutManager, musicPlayer, miniPlayerIntentHandler)
+                .tag(0)
+                .tabItem {
+                    VStack {
+                        Image(systemName: "music.note")
+                        Text("Now")
+                    }
                 }
-            }
             
             PlaylistView(
                 musicManager: musicManager,
