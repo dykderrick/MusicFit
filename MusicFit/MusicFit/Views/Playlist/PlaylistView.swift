@@ -40,7 +40,7 @@ struct PlaylistView: View {
 			PlaylistCreationSheet(musicManager: musicManager, musicFitPlaylistManager: musicFitPlaylistManager)
 		}
 		.sheet(isPresented: $miniPlayerIntentHandler.showingPlayerSheet) {
-			PlayerSheet(musicPlayer: musicPlayer)
+            PlayerSheet(musicPlayer)
 		}
 		
     }

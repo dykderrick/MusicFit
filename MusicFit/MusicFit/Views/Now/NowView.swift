@@ -30,7 +30,7 @@ struct NowView: View {
 		}
 		.padding()
 		.sheet(isPresented: $miniPlayerIntentHandler.showingPlayerSheet) {
-			PlayerSheet(musicPlayer: musicPlayer)
+            PlayerSheet(musicPlayer)
 		}
     }
 }
