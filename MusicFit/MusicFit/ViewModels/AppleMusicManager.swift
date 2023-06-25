@@ -12,8 +12,6 @@ import StoreKit
 
 // FIXME: Can we use generics and protocols to shrink these bunch of functions which mostly act the same thing?
 class AppleMusicManager: ObservableObject {
-	private static let developerToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjVRTEQ3VFY0SDQifQ.eyJpc3MiOiJHODJDTE5WQTY0IiwiZXhwIjoxNjY3Njg0MDY1LCJpYXQiOjE2NTE5MTYwNjV9.KuxfoPON751gB-_-xWuucC4ppPTPYQs6_yznr8GC6FTxJfsnvIbGeVvspd6n1yZXtbMCr_vGYwlyouymI8biHg"  // FIXME: Can we hide it somehow?
-    private let apiRootPath = "https://api.music.apple.com/v1"  // Apple Music API Root Path
 	private let fileHandler = FileHandler()  // Handle JSON File
 	
 //    @Published var currentPlayingSong = Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""])
@@ -23,7 +21,7 @@ class AppleMusicManager: ObservableObject {
 	// See Also: https://stackoverflow.com/questions/65057320/skcloudservicecontroller-requestusertoken-freezes-on-ios-14-2
 	// TODO: Add formal documentation to this function
 	func getUserToken(completion: @escaping(_ userToken: String) -> Void) -> Void {
-		SKCloudServiceController().requestUserToken(forDeveloperToken: AppleMusicManager.developerToken) { (userToken, error) in
+		SKCloudServiceController().requestUserToken(forDeveloperToken: Configs.DEVELOPER_TOKEN) { (userToken, error) in
 			guard error == nil else { return }
 			completion(userToken!)
 		}
@@ -33,7 +31,7 @@ class AppleMusicManager: ObservableObject {
 	// TODO: Add formal documentation to this function
 	func fetchStorefrontID(userToken: String, completion: @escaping(String) -> Void) {
         let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/storefront",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/storefront",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -53,7 +51,7 @@ class AppleMusicManager: ObservableObject {
 	private func wrapMusicRequest(urlSting: String, userToken: String, httpMethod: String, parameters: [String: Any]?) -> Alamofire.DataRequest {
 		
 		let headers: HTTPHeaders = [
-			"Authorization": "Bearer \(AppleMusicManager.developerToken)",
+			"Authorization": "Bearer \(Configs.DEVELOPER_TOKEN)",
 			"Music-User-Token": userToken
 		]
 		
@@ -75,7 +73,7 @@ extension AppleMusicManager {
 	// TODO: Add formal documentation to this function
 	func getCatelogSong(_ userToken: String, storefrontId: String, catelogSongId: String, completion: @escaping(Song) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/catalog/\(storefrontId)/songs/\(catelogSongId)",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/catalog/\(storefrontId)/songs/\(catelogSongId)",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -119,7 +117,7 @@ extension AppleMusicManager {
 		var rating = Song.Rating.unset
 		
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/ratings/songs/\(songIdentifier)",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/ratings/songs/\(songIdentifier)",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -158,7 +156,7 @@ extension AppleMusicManager {
 		
 		// FIXME: When type in "周杰倫", the result returns nil.
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/catalog/\(storefrontID)/search?term=\(searchTerm.replacingOccurrences(of: " ", with: "+"))&types=songs&limit=5",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/catalog/\(storefrontID)/search?term=\(searchTerm.replacingOccurrences(of: " ", with: "+"))&types=songs&limit=5",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -208,7 +206,7 @@ extension AppleMusicManager {
 		var playlists = [Playlist]()
 		
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/library/playlists",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlists",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -246,7 +244,7 @@ extension AppleMusicManager {
 	// TODO: Add formal documentation to this function
 	func getLibraryPlaylistData(_ userToken: String, catelogPlaylistId: String, completion: @escaping((playlistExists: Bool, playlist: Playlist)) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/library/playlists/\(catelogPlaylistId)",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlists/\(catelogPlaylistId)",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -291,7 +289,7 @@ extension AppleMusicManager {
 	// TODO: Add formal documentation to this function
 	func getLibraryPlaylistTracks(_ userToken: String, libraryPlaylistId: String, completion: @escaping(PlaylistTracks) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/library/playlists/\(libraryPlaylistId)/tracks",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlists/\(libraryPlaylistId)/tracks",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -361,7 +359,7 @@ extension AppleMusicManager {
 		}
 		
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/library/playlists",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlists",
 			userToken: userToken,
 			httpMethod: "POST",
 			parameters: [
@@ -416,7 +414,7 @@ extension AppleMusicManager {
 	// TODO: Add formal documentation to this function
 	func createLibraryPlaylistFolder(_ userToken: String, folderName: String, completion: @escaping((Bool, String)) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(apiRootPath)/me/library/playlist-folders",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlist-folders",
 			userToken: userToken,
 			httpMethod: "POST",
 			parameters: [

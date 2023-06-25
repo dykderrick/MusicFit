@@ -27,6 +27,7 @@
 		8C81BED428337C3C00DE7A54 /* PlaylistCreationSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C81BED328337C3C00DE7A54 /* PlaylistCreationSheet.swift */; };
 		8C81BED828339DB100DE7A54 /* FileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C81BED728339DB100DE7A54 /* FileHandler.swift */; };
 		8CAFE36B283CD82500EF4F4A /* UpNextsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAFE36A283CD82500EF4F4A /* UpNextsList.swift */; };
+		8CB9B36C2A48326A0097DC8F /* Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB9B36B2A48326A0097DC8F /* Configs.swift */; };
 		8CC68C28282A4D7A0079E550 /* PlaylistTracks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC68C26282A4D7A0079E550 /* PlaylistTracks.swift */; };
 		8CC68C29282A4D7A0079E550 /* Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC68C27282A4D7A0079E550 /* Playlist.swift */; };
 		8CC73FD82826525700F61986 /* MusicFitApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CC73FD72826525700F61986 /* MusicFitApp.swift */; };
@@ -78,6 +79,7 @@
 		8C81BED728339DB100DE7A54 /* FileHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHandler.swift; sourceTree = "<group>"; };
 		8C81BED92833A09400DE7A54 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8CAFE36A283CD82500EF4F4A /* UpNextsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpNextsList.swift; sourceTree = "<group>"; };
+		8CB9B36B2A48326A0097DC8F /* Configs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configs.swift; sourceTree = "<group>"; };
 		8CC68C26282A4D7A0079E550 /* PlaylistTracks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaylistTracks.swift; sourceTree = "<group>"; };
 		8CC68C27282A4D7A0079E550 /* Playlist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
 		8CC73FD42826525700F61986 /* MusicFit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MusicFit.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -245,6 +247,7 @@
 				8CC68C26282A4D7A0079E550 /* PlaylistTracks.swift */,
 				8CC74018282669D700F61986 /* Song.swift */,
 				8C5E764D283138DB00DCC4BA /* MusicFitStatus.swift */,
+				8CB9B36B2A48326A0097DC8F /* Configs.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 				8CC740272826703A00F61986 /* NowView.swift in Sources */,
 				35489FCA2845DC3D00582613 /* PlayerSheet.swift in Sources */,
 				8C71CED528367CE30039A8FF /* MusicFitPlaylistManager.swift in Sources */,
+				8CB9B36C2A48326A0097DC8F /* Configs.swift in Sources */,
 				8C66331A283CD2FE00B97276 /* UpNextSong.swift in Sources */,
 				353B2D722844489600EDEF76 /* WorkoutManager.swift in Sources */,
 				8C6633172839DF8800B97276 /* NowStatus.swift in Sources */,
