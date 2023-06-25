@@ -26,7 +26,7 @@ struct NowView: View {
 			
 			UpNextsList(musicPlayer: musicPlayer, workoutManager: workoutManager)
 			
-			MiniPlayer(musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler)
+            MiniPlayer(musicPlayer, miniPlayerIntentHandler)
 		}
 		.padding()
 		.sheet(isPresented: $miniPlayerIntentHandler.showingPlayerSheet) {

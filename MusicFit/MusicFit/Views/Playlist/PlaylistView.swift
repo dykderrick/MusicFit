@@ -28,7 +28,7 @@ struct PlaylistView: View {
 				}
 				.navigationTitle("Playlist")
 				
-				MiniPlayer(musicPlayer: musicPlayer, miniPlayerIntentHandler: miniPlayerIntentHandler)
+                MiniPlayer(musicPlayer, miniPlayerIntentHandler)
 				Spacer()
 			}
 		}
