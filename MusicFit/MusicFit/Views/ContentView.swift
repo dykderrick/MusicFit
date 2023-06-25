@@ -51,10 +51,10 @@ struct ContentView: View {
                 }
             
             PlaylistView(
-                musicManager: musicManager,
-                musicPlayer: musicPlayer,
-                miniPlayerIntentHandler: miniPlayerIntentHandler,
-                musicFitPlaylistManager: musicFitPlaylistManager
+                musicManager,
+                musicPlayer,
+                miniPlayerIntentHandler,
+                musicFitPlaylistManager
             )
             .tag(1)
             .tabItem {
