@@ -33,7 +33,7 @@ struct PlaylistView: View {
             VStack {
                 List {
                     ForEach(MusicFitStatus.allCases, id:\.self) { status in
-                        PlaylistItem(musicFitPlaylistManager: musicFitPlaylistManager, musicFitStatus: status)
+                        PlaylistItem(musicFitPlaylistManager, status: status)
                             .listRowBackground(Color.black)
                     }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0))
