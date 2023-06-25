@@ -32,7 +32,7 @@ struct NowView: View {
                 Spacer(minLength: 80)
             }
             
-            NowStatus(workoutManager: workoutManager, musicPlayer: musicPlayer)
+            NowStatus(workoutManager, musicPlayer)
             
             UpNextsList(musicPlayer, workoutManager)
             
