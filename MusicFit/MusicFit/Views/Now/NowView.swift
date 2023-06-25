@@ -24,7 +24,7 @@ struct NowView: View {
 			
 			NowStatus(workoutManager: workoutManager, musicPlayer: musicPlayer)
 			
-			UpNextsList(musicPlayer: musicPlayer, workoutManager: workoutManager)
+            UpNextsList(musicPlayer, workoutManager)
 			
             MiniPlayer(musicPlayer, miniPlayerIntentHandler)
 		}
