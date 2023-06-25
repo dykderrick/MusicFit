@@ -6,5 +6,10 @@ MusicFit/MusicFit.xcodeproj/xcuserdata/*
 
 MusicFit/MusicFit.xcodeproj/project.xcworkspace/xcuserdata/*
 
+# Configs, keys and Identifiers
+MusicFit/MusicFit/Models/Configs.swift
+*.p8
+
 # py scripts
 *.py
+Pipfile
