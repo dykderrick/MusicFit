@@ -37,7 +37,6 @@ struct ContentView: View {
         self.fileHandler = fileHandler
         self.intentHandler = intentHandler
         self.musicFitPlaylistManager = musicFitPlaylistManager
-        self.selection = selection
     }
     
     var body: some View {
