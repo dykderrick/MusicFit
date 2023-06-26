@@ -12,12 +12,31 @@ import StoreKit
 
 // FIXME: Can we use generics and protocols to shrink these bunch of functions which mostly act the same thing?
 class AppleMusicManager: ObservableObject {
-	private let fileHandler = FileHandler()  // Handle JSON File
+    @Published var appleMusicStorefrontID: String?
+    
+    private let fileHandler: FileHandler  // Handle JSON File
 	
 //    @Published var currentPlayingSong = Song(id: "", name: "", artistName: "", artworkURL: "", genreNames: [""])
 //	@Published var musicPlayer = MPMusicPlayerController.systemMusicPlayer  // Use iOS/iPadOS Msuic.app
 //	@Published var isPlaying = false
-
+    
+    init() {
+        self.appleMusicStorefrontID = nil
+        self.fileHandler = FileHandler()
+    }
+    
+    /// Set `Published` ``appleMusicStorefrontID`` in ``AppleMusicManager``.
+    func setAppleMusicStorefrontID() async {
+        if let storeFrontID = await AppleMusicAPIBase.getAppleMusicStorefrontID() {
+            await MainActor.run {
+                self.appleMusicStorefrontID = storeFrontID
+            }
+        } else {
+            print("Storefront ID Fetch Failed.")
+        }
+    }
+    
+    // MARK: - Rewritten
 	// See Also: https://stackoverflow.com/questions/65057320/skcloudservicecontroller-requestusertoken-freezes-on-ios-14-2
 	// TODO: Add formal documentation to this function
 	func getUserToken(completion: @escaping(_ userToken: String) -> Void) -> Void {
@@ -26,12 +45,13 @@ class AppleMusicManager: ObservableObject {
 			completion(userToken!)
 		}
 	}
-	
+    
+    // MARK: - Rewritten
 	// storefrontID is an ISO 3166 alpha-2 country code
 	// TODO: Add formal documentation to this function
 	func fetchStorefrontID(userToken: String, completion: @escaping(String) -> Void) {
         let musicRequest = wrapMusicRequest(
-			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/storefront",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/v1/me/storefront",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -69,11 +89,12 @@ class AppleMusicManager: ObservableObject {
 
 // MARK: - Song
 extension AppleMusicManager {
+    // MARK: - Rewritten
 	// See Also: https://developer.apple.com/documentation/applemusicapi/get_a_catalog_song
 	// TODO: Add formal documentation to this function
 	func getCatelogSong(_ userToken: String, storefrontId: String, catelogSongId: String, completion: @escaping(Song) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/catalog/\(storefrontId)/songs/\(catelogSongId)",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/v1/catalog/\(storefrontId)/songs/\(catelogSongId)",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -110,14 +131,14 @@ extension AppleMusicManager {
 		}.resume()
 	}
 	
-	
+	// MARK: - Rewritten
 	// See Also: https://developer.apple.com/documentation/applemusicapi/get_a_personal_song_rating
 	// TODO: Add formal documentation to this function
-	func getSongRating(_ userToken: String, id songIdentifier: String, completion: @escaping(Song.Rating) -> Void) {
-		var rating = Song.Rating.unset
+	func getSongRating(_ userToken: String, id songIdentifier: String, completion: @escaping(Rating) -> Void) {
+		var rating = Rating.unset
 		
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/ratings/songs/\(songIdentifier)",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/v1/me/ratings/songs/\(songIdentifier)",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -137,14 +158,14 @@ extension AppleMusicManager {
 			case .success(let value):
 				let result = (JSON(value)["data"]).array![0]["attributes"]["value"].intValue
 	
-				rating = (result == 1) ? Song.Rating.likes : Song.Rating.dislikes
+				rating = (result == 1) ? Rating.likes : Rating.dislikes
 
 				completion(rating)
 				
 			case .failure(_):
 				// The most ugly design in Apple Music API: when the user hasn't set a song's rating, the API responses a 404.
 				// See Also: https://stackoverflow.com/questions/53767247/getting-a-rating-for-a-song-with-apple-music-api
-				completion(Song.Rating.unset)
+				completion(Rating.unset)
 			}
 		}.resume()
 	}
@@ -156,7 +177,7 @@ extension AppleMusicManager {
 		
 		// FIXME: When type in "周杰倫", the result returns nil.
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/catalog/\(storefrontID)/search?term=\(searchTerm.replacingOccurrences(of: " ", with: "+"))&types=songs&limit=5",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/v1/catalog/\(storefrontID)/search?term=\(searchTerm.replacingOccurrences(of: " ", with: "+"))&types=songs&limit=5",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -200,13 +221,14 @@ extension AppleMusicManager {
 
 // MARK: - Playlist
 extension AppleMusicManager {
+    // MARK: - Rewritten
 	// See Also: https://developer.apple.com/documentation/applemusicapi/get_all_library_playlists
 	// TODO: Add formal documentation to this function
 	func getAllLibraryPlaylists(_ userToken: String, completion: @escaping([Playlist]) -> Void) {
 		var playlists = [Playlist]()
 		
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlists",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/v1/me/library/playlists",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -240,11 +262,12 @@ extension AppleMusicManager {
 		}.resume()
 	}
 	
+    // MARK: - Rewritten
 	// See Also: https://developer.apple.com/documentation/applemusicapi/get_a_library_playlist
 	// TODO: Add formal documentation to this function
 	func getLibraryPlaylistData(_ userToken: String, catelogPlaylistId: String, completion: @escaping((playlistExists: Bool, playlist: Playlist)) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlists/\(catelogPlaylistId)",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/v1/me/library/playlists/\(catelogPlaylistId)",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -289,7 +312,7 @@ extension AppleMusicManager {
 	// TODO: Add formal documentation to this function
 	func getLibraryPlaylistTracks(_ userToken: String, libraryPlaylistId: String, completion: @escaping(PlaylistTracks) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlists/\(libraryPlaylistId)/tracks",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/v1/me/library/playlists/\(libraryPlaylistId)/tracks",
 			userToken: userToken,
 			httpMethod: "GET",
 			parameters: nil
@@ -346,6 +369,7 @@ extension AppleMusicManager {
 		}.resume()
 	}
 	
+    // MARK: - Rewritten
 	// See Also: https://developer.apple.com/documentation/applemusicapi/create_a_new_library_playlist
 	// TODO: Add formal documentation to this function
 	func createPlaylistWithCatelogSongs(_ userToken: String, playlistName: String, playlistDescription: String, playlistFolderId: String, songCatelogIds: [String], completion: @escaping(Playlist) -> Void) {
@@ -359,7 +383,7 @@ extension AppleMusicManager {
 		}
 		
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlists",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/v1/me/library/playlists",
 			userToken: userToken,
 			httpMethod: "POST",
 			parameters: [
@@ -410,11 +434,12 @@ extension AppleMusicManager {
 		}.resume()
 	}
 	
+    // MARK: - Rewritten
 	// See Also: https://developer.apple.com/documentation/applemusicapi/create_a_new_library_playlist_folder
 	// TODO: Add formal documentation to this function
 	func createLibraryPlaylistFolder(_ userToken: String, folderName: String, completion: @escaping((Bool, String)) -> Void) {
 		let musicRequest = wrapMusicRequest(
-			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/me/library/playlist-folders",
+			urlSting: "\(Configs.APPLE_MUSIC_API_URL)/v1/me/library/playlist-folders",
 			userToken: userToken,
 			httpMethod: "POST",
 			parameters: [

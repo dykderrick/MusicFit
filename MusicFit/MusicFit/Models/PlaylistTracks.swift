@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MusicKit
 
 struct PlaylistTracks {
     var playlistId: String
@@ -15,4 +16,13 @@ struct PlaylistTracks {
         self.playlistId = playlistId
         self.tracks = tracks
     }
+}
+
+struct AppleMusicMeLibraryPlaylistRelationshipResponseMeta: Codable {
+    var total: Int
+}
+
+struct AppleMusicMeLibraryPlaylistRelationshipResponse: Codable {
+    var data: [MusicKit.Song]
+    var meta: AppleMusicMeLibraryPlaylistRelationshipResponseMeta
 }

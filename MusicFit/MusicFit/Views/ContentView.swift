@@ -84,6 +84,11 @@ struct ContentView: View {
         }
         .accentColor(Color(hex: "\(MusicFitColors.green)"))
         .onAppear() {
+            // Set storefront ID
+            Task {
+                await musicManager.setAppleMusicStorefrontID()
+            }
+            
             // Copy Bundle file MusicFitPlaylists.json to App Documents directory.
             intentHandler.setMusicFitPlaylistMetadata(fileHandler)
             

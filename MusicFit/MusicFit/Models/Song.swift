@@ -6,6 +6,13 @@
 //
 
 import Foundation
+import MusicKit
+
+enum Rating {
+    case likes
+    case dislikes
+    case unset
+}
 
 struct Song: Identifiable {
 	var id: String
@@ -15,12 +22,6 @@ struct Song: Identifiable {
     var genreNames: [String]  // ["Pop", "Music", ...]
 	var likes: Rating
 	var durationInMillis: Int
-	
-	enum Rating {
-		case likes
-		case dislikes
-		case unset
-	}
 	
 	init(id: String, name: String, artistName: String, artworkURL: String, genreNames: [String], durationInMillis: Int) {
 		self.id = id
@@ -41,4 +42,82 @@ struct Song: Identifiable {
 		self.likes = likes
 		self.durationInMillis = durationInMillis
 	}
+}
+//
+//struct SongAttributes: Codable {
+//    var albumName: String
+//    var genreNames: [String]
+//    var trackNumber: Int
+//    var releaseDate: String
+//    var durationInMillis: Int
+//    var isrc: String
+//    var artwork: SongArtwork
+//    var composerName: String
+//    var playParams: SongPlayParams
+//    var url: String
+//    var discNumber: Int
+//    var isAppleDigitalMaster: Bool
+//    var hasLyrics: Bool
+//    var name: String
+//    var previews: [SongPreview]
+//    var artistName: String
+//}
+//
+//struct SongArtwork: Codable {
+//    var width: Double
+//    var height: Double
+//    var url: String
+//    var bgColor: String
+//    var textColor1: String
+//    var textColor2: String
+//    var textColor3: String
+//    var textColor4: String
+//}
+//
+//struct SongPlayParams: Identifiable, Codable {
+//    var id: String
+//    var kind: String
+//}
+//
+//struct SongPreview: Codable {
+//    var url: String
+//}
+//
+//struct AppleMusicAlbumEntry: Identifiable, Codable {
+//    var id: String
+//    var type: String
+//    var href: String
+//}
+//
+//struct AppleMusicAlbums: Codable {
+//    var href: String
+//    var data: [AppleMusicAlbumEntry]
+//}
+//
+//struct AppleMusicCatalogSongArtistEnry: Identifiable, Codable {
+//    var id: String
+//    var type: String
+//    var href: String
+//}
+//
+//struct AppleMusicCatalogSongArtists: Codable {
+//    var href: String
+//    var data: [AppleMusicCatalogSongArtistEnry]
+//}
+//
+//struct SongRelationships: Codable {
+//    var albums: AppleMusicAlbums
+//    var artists: AppleMusicCatalogSongArtists
+//}
+//
+//struct AppleMusicCatalogSong: Identifiable, Codable {
+//    var id: String
+//    var type: String
+//    var href: String
+//    var attributes: SongAttributes
+//    var relationships: SongRelationships
+//}
+
+struct AppleMusicCatalogSongResponse: Codable {
+    var data: [MusicKit.Song]
 }

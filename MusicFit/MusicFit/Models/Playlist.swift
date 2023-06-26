@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import MusicKit
 
 struct Playlist {
     var id: String
@@ -26,4 +27,8 @@ struct Playlist {
         self.artworkURL = artworkURL
     }
     
+}
+
+struct AppleMusicMeLibraryPlaylistsResponse: Codable {
+    var data: [MusicKit.Playlist]
 }
