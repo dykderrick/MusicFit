@@ -63,7 +63,7 @@ struct NowStatus: View {
                         width: UIScreen.main.bounds.width - 120,
                         height: UIScreen.main.bounds.height / 13
                     )
-                    .background(Color(hex: "\(MusicFitColors.green)"))
+                    .background(Color.musicFitGreen)
                     .clipShape(Capsule())
             }
             .frame(

@@ -34,7 +34,7 @@ struct MiniPlayer: View {
                         .tint(.white)
                     Text(musicPlayer.currentPlayingSong.artistName)  // Artist Name
                         .font(.system(size: 15, weight: .regular))
-                        .tint(Color(hex: "\(MusicFitColors.gray)"))
+                        .tint(Color.musicFitGray)
                 }
                 .frame(height: 54)
             })
@@ -49,7 +49,7 @@ struct MiniPlayer: View {
                 }
             }) {
                 Image(systemName: pauseResumeButtonImageSystemName)
-                    .foregroundColor(Color(hex: "\(MusicFitColors.gray)"))
+                    .foregroundColor(Color.musicFitGray)
                     .onReceive(NotificationCenter.default.publisher(for: .MPMusicPlayerControllerPlaybackStateDidChange)) { _ in
                         if MPMusicPlayerController.applicationQueuePlayer.playbackState == .playing {
                             pauseResumeButtonImageSystemName = "pause.fill"

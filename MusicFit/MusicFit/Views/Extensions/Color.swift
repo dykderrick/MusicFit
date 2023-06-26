@@ -1,5 +1,5 @@
 //
-//  Colors.swift
+//  Color.swift
 //  MusicFit
 //
 //  Created by Derrick Ding on 5/31/22.
@@ -8,12 +8,10 @@
 import Foundation
 import SwiftUI
 
-struct MusicFitColors {
-    static let green = "#25E495"
-    static let gray = "#D8D8D8"
-}
-
 extension Color {
+    static let musicFitGreen = Color(hex: "25E495")
+    static let musicFitGray = Color(hex: "D8D8D8")
+    
     /// A color specification by hex code.
     /// Credit to the [Stack Overflow answer](https://stackoverflow.com/questions/56874133/use-hex-color-in-swiftui).
     ///

@@ -82,7 +82,7 @@ struct ContentView: View {
                     }
                 }
         }
-        .accentColor(Color(hex: "\(MusicFitColors.green)"))
+        .accentColor(Color.musicFitGreen)
         .onAppear() {
             // Set storefront ID
             Task {

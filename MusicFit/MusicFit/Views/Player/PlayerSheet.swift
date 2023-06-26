@@ -54,7 +54,7 @@ struct PlayerSheet: View {
                 total: Double(musicPlayer.currentPlayingSong.durationInMillis)
             )
             .frame(width: UIScreen.main.bounds.width - 50, height: 30)
-            .tint(Color(hex: "\(MusicFitColors.green)"))
+            .tint(Color.musicFitGreen)
             .onReceive(timer) { _ in
                 progressAmount = musicPlayer.player.currentPlaybackTime * 1000
             }
@@ -75,7 +75,7 @@ struct PlayerSheet: View {
                     // TODO: Add Like/Dislike Button functions
                 }, label: {
                     Image(systemName: "heart.fill")  // TODO: Change it
-                        .tint(Color(hex: "\(MusicFitColors.green)"))
+                        .tint(Color.musicFitGreen)
                 })
                 
                 // MARK: - Revert to beginning / Last Song Button
@@ -97,7 +97,7 @@ struct PlayerSheet: View {
                     ZStack {
                         Circle()
                             .frame(width: 80, height: 80)
-                            .tint(Color(hex: "\(MusicFitColors.green)"))
+                            .tint(Color.musicFitGreen)
                             .shadow(radius: 10)
                         
                         Image(systemName: MPMusicPlayerController.applicationQueuePlayer.playbackState == .playing ? "pause.fill" : "play.fill")
@@ -127,7 +127,7 @@ struct PlayerSheet: View {
                     // TODO: Add action
                 }, label: {
                     Image(systemName: "ellipsis")
-                        .tint(Color(hex: "\(MusicFitColors.gray)"))
+                        .tint(Color.musicFitGray)
                 })
                 
             }

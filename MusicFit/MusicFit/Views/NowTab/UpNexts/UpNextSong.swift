@@ -43,7 +43,7 @@ struct UpNextSong: View {
             Spacer()
             
             Image(systemName: "heart.fill")  // TODO: Add button to like/dislike the song
-                .foregroundColor(Color(hex: "\(MusicFitColors.green)"))
+                .foregroundColor(Color.musicFitGreen)
         }
         .frame(width: UIScreen.main.bounds.width - 130, height: UIScreen.main.bounds.height / 10)
     }

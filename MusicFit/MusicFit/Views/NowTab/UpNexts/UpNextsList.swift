@@ -34,7 +34,7 @@ struct UpNextsList: View {
                 }) {
                     Image(systemName: "ellipsis")
                 }
-                .tint(Color(hex: "\(MusicFitColors.gray)"))
+                .tint(Color.musicFitGray)
             }
             
             ForEach(musicPlayer.upNextSongsQueue[musicPlayer.player.indexOfNowPlayingItem ... musicPlayer.upNextSongsQueue.count - 1]) { song in
